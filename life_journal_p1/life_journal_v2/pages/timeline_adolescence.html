@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — السنوات والأشهر</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+.tl-body{padding:24px;max-width:900px;margin:0 auto}
+.today-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.08);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-top:6px}
+
+/* year card */
+.tl-year-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);transition:var(--ease);animation:fadeUp .4s ease both}
+.tl-year-card:hover{box-shadow:var(--shadow-h)}
+.tl-year-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;user-select:none;transition:background .2s;gap:12px}
+.tl-year-header:hover,.tl-year-card.open .tl-year-header{background:var(--sbg)}
+.tl-year-left{display:flex;align-items:center;gap:14px}
+.tl-year-num{font-size:22px;font-weight:900}
+.tl-year-sub{font-size:12px;color:var(--muted)}
+.tl-year-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;color:#fff}
+.tl-year-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tl-event-count{font-size:11px;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:3px 10px;font-weight:700}
+.tl-chevron{font-size:16px;color:var(--muted);transition:transform .3s}
+.tl-year-card.open .tl-chevron{transform:rotate(180deg)}
+
+/* month */
+.tl-year-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.tl-year-card.open .tl-year-body{max-height:99999px}
+.tl-months-wrap{padding:0 20px 20px}
+.tl-month-card{border:1px solid var(--border);border-radius:18px;margin-bottom:12px;overflow:hidden;background:var(--bg)}
+.tl-month-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;cursor:pointer;user-select:none;transition:background .2s}
+.tl-month-header:hover{background:var(--sbg)}
+.tl-month-name{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}
+.tl-month-name i{color:var(--sc);font-size:14px}
+.tl-month-count{font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2px 8px;font-weight:700}
+.tl-month-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.tl-month-card.open .tl-month-body{max-height:99999px}
+.tl-month-chevron{font-size:13px;color:var(--muted);transition:transform .3s}
+.tl-month-card.open .tl-month-chevron{transform:rotate(180deg)}
+
+/* events */
+.tl-events-list{padding:10px 18px 14px;display:flex;flex-direction:column;gap:10px}
+.tl-event{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;transition:var(--ease)}
+.tl-event:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--sc)}
+.tl-ev-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl-ev-icon i{font-size:15px;color:#fff}
+.tl-ev-body{flex:1;min-width:0}
+.tl-ev-header{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.tl-ev-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tl-ev-date-wrap{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
+.tl-ev-date{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.tl-ev-date i{color:var(--sc);font-size:11px}
+.day-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg,#f5f7fa);border:1px solid var(--border,#e5e7eb);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;color:var(--sc,#667eea)}
+.tl-ev-title{font-size:13px;font-weight:800;margin-bottom:3px}
+.tl-ev-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+
+/* thumbnails */
+.tl-ev-photos{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tl-ev-photo{width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
+.tl-ev-photo:hover{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.tl-ev-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.tl-ev-photo-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+
+/* filters */
+.tl-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.tl-filter-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:var(--ease);font-family:inherit}
+.tl-filter-btn:hover,.tl-filter-btn.active{background:var(--sc);border-color:var(--sc);color:#fff}
+
+/* ── IMAGE MODAL ── */
+.img-modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;backdrop-filter:blur(6px);padding:16px}
+.img-modal-overlay.active{opacity:1;pointer-events:all}
+.img-modal-box{background:#fff;border-radius:24px;overflow:hidden;max-width:480px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.5);transform:scale(.88) translateY(20px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);font-family:'Tajawal',sans-serif}
+.img-modal-overlay.active .img-modal-box{transform:scale(1) translateY(0)}
+.img-modal-img-wrap{position:relative;width:100%;height:260px;background:#111}
+.img-modal-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.img-modal-close{position:absolute;top:12px;left:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.img-modal-close:hover{background:rgba(0,0,0,.85)}
+.img-modal-gradient{position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(0,0,0,.55),transparent)}
+.img-modal-title-overlay{position:absolute;bottom:12px;right:16px;color:#fff;font-size:14px;font-weight:800;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.img-modal-info{padding:18px 20px 20px}
+.img-modal-day-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:50px;padding:6px 16px;font-size:13px;font-weight:700;margin-bottom:14px}
+.img-modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.imi{background:#f5f7fa;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:9px}
+.imi .imi-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.imi .imi-text label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.imi .imi-text span{font-size:13px;font-weight:800;color:#222}
+.img-modal-footer{border-top:1px solid #eee;padding:12px 20px;display:flex;align-items:center;gap:8px;font-size:12px;color:#888}
+
+@media(max-width:576px){
+  .tl-body{padding:16px}
+  .tl-year-header{padding:14px 16px}
+  .tl-months-wrap{padding:0 12px 16px}
+  .img-modal-img-wrap{height:200px}
+}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile_teen.html"><i class="bi bi-house-fill"></i><span data-ar=" الرئيسية" data-en=" Home"> الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar=" الولادة" data-en=" Birth"> الولادة</span></a>
+  <a class="page-tab" href="height_adolescence.html"><i class="bi bi-rulers"></i><span data-ar=" الطول" data-en=" Height"> الطول</span></a>
+  <a class="page-tab" href="certs_adolescence.html"><i class="bi bi-award-fill"></i><span data-ar=" الشهادات" data-en=" Certificates"> الشهادات</span></a>
+  <a class="page-tab" href="edu_adolescence.html"><i class="bi bi-mortarboard-fill"></i><span data-ar=" التعليم" data-en=" Education"> التعليم</span></a>
+  <a class="page-tab active" href="timeline_adolescence.html"><i class="bi bi-calendar3"></i><span data-ar=" السنوات" data-en=" Timeline"> السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#fafafa;--ha:#555">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="السنوات والأشهر" data-en="Years & Months">السنوات والأشهر</span> <span class="sec-he"></span></h2>
+  <p data-ar="كل سنة مقسمة بأشهرها وما تم تسجيله فيها" data-en="Each year split by months and recorded events">كل سنة مقسمة بأشهرها وما تم تسجيله فيها</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="tl-body">
+  <!-- filters -->
+  <div class="tl-filters">
+    <button class="tl-filter-btn active" onclick="filterEvents('all',this)" data-ar="الكل" data-en="All">الكل</button>
+    <button class="tl-filter-btn" onclick="filterEvents('honor',this)" data-ar="تكريم 🏆" data-en="Honor 🏆">تكريم 🏆</button>
+    <button class="tl-filter-btn" onclick="filterEvents('success',this)" data-ar="نجاح ✅" data-en="Success ✅">نجاح ✅</button>
+    <button class="tl-filter-btn" onclick="filterEvents('graduation',this)" data-ar="تخرج 🎓" data-en="Graduation 🎓">تخرج 🎓</button>
+    <button class="tl-filter-btn" onclick="filterEvents('sport',this)" data-ar="رياضة ⚽" data-en="Sport ⚽">رياضة ⚽</button>
+    <button class="tl-filter-btn" onclick="filterEvents('volunteer',this)" data-ar="تطوع 💚" data-en="Volunteer 💚">تطوع 💚</button>
+  </div>
+
+  <!-- ══ 2023 ══ -->
+  <div class="tl-year-card" style="animation-delay:0s">
+    <div class="tl-year-header" onclick="toggleYear(this)">
+      <div class="tl-year-left">
+        <div>
+          <div class="tl-year-num">2023</div>
+          <div class="tl-year-sub" data-ar="السنة الثامنة — الصف الثالث" data-en="Year 8 — Grade 3">السنة الثامنة — الصف الثالث</div>
+        </div>
+        <span class="tl-year-badge" style="background:#E8630A" data-ar="8 سنوات" data-en="Age 8">8 سنوات</span>
+      </div>
+      <div class="tl-year-right">
+        <span class="tl-event-count" data-ar="4 أحداث" data-en="4 Events">4 أحداث</span>
+        <i class="bi bi-chevron-down tl-chevron"></i>
+      </div>
+    </div>
+    <div class="tl-year-body">
+      <div class="tl-months-wrap">
+
+        <!-- يونيو 2023 -->
+        <div class="tl-month-card open">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="يونيو 2023" data-en="June 2023">يونيو 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدثان" data-en="2 Events">حدثان</span>
+              <i class="bi bi-chevron-down tl-month-chevron" style="transform:rotate(180deg)"></i>
+            </div>
+          </div>
+          <div class="tl-month-body" style="max-height:99999px">
+            <div class="tl-events-list">
+
+              <!-- Event 1 -->
+              <div class="tl-event" data-category="honor">
+                <div class="tl-ev-icon" style="background:#F59E0B"><i class="bi bi-trophy-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#F59E0B1A;color:#F59E0B" data-ar="تكريم" data-en="Honor">تكريم</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="12/06/2023"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="شهادة الطالب المتفوق" data-en="Excellence Award">شهادة الطالب المتفوق</div>
+                  <div class="tl-ev-desc" data-ar="المركز الأول في مسابقة العلوم على مستوى المدرسة." data-en="First place in school science competition.">المركز الأول في مسابقة العلوم على مستوى المدرسة.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/6.jfif','شهادة الطالب المتفوق','Excellence Award','12/06/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/6.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#F59E0B22">🏆</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/5.jpg','شهادة الطالب المتفوق','Excellence Award','12/06/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/5.jpg" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#F59E0B22">🌟</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Event 2 -->
+              <div class="tl-event" data-category="success">
+                <div class="tl-ev-icon" style="background:#22C55E"><i class="bi bi-patch-check-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#22C55E1A;color:#22C55E" data-ar="نجاح" data-en="Success">نجاح</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 25/06/2023</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="25/06/2023"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="اجتياز الصف الثالث بامتياز" data-en="Passed Grade 3 with Distinction">اجتياز الصف الثالث بامتياز</div>
+                  <div class="tl-ev-desc" data-ar="نجح بتقدير 98% وكان الأول على الصف." data-en="Passed with 98% and ranked first in class.">نجح بتقدير 98% وكان الأول على الصف.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/4.jfif','اجتياز الصف الثالث','Passed Grade 3','25/06/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/4.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#22C55E22">✅</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/3.jfif','اجتياز الصف الثالث','Passed Grade 3','25/06/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/3.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#22C55E22">📜</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- سبتمبر 2023 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="سبتمبر 2023" data-en="September 2023">سبتمبر 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدث واحد" data-en="1 Event">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="success">
+                <div class="tl-ev-icon" style="background:#3B82F6"><i class="bi bi-cpu-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="نجاح" data-en="Success">نجاح</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 20/09/2023</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="20/09/2023"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="دورة البرمجة Scratch" data-en="Scratch Coding Course">دورة البرمجة Scratch</div>
+                  <div class="tl-ev-desc" data-ar="أتم الدورة بمعدل 98%." data-en="Completed with 98% score.">أتم الدورة بمعدل 98%.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/7.jfif','دورة البرمجة Scratch','Scratch Coding Course','20/09/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/7.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#3B82F622">💻</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/8.jfif','دورة البرمجة Scratch','Scratch Coding Course','20/09/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/8.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#3B82F622">📜</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- نوفمبر 2023 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="نوفمبر 2023" data-en="November 2023">نوفمبر 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدث واحد" data-en="1 Event">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="volunteer">
+                <div class="tl-ev-icon" style="background:#10B981"><i class="bi bi-tree-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#10B9811A;color:#10B981" data-ar="تطوع" data-en="Volunteer">تطوع</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 10/11/2023</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="10/11/2023"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="مبادرة تشجير المدرسة" data-en="School Greening Initiative">مبادرة تشجير المدرسة</div>
+                  <div class="tl-ev-desc" data-ar="شارك في زرع 20 شجرة ضمن المبادرة الوطنية." data-en="Participated in planting 20 trees.">شارك في زرع 20 شجرة ضمن المبادرة الوطنية.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/12.jfif','مبادرة تشجير المدرسة','School Greening Initiative','10/11/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/12.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#10B98122">🌳</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/13.jfif','مبادرة تشجير المدرسة','School Greening Initiative','10/11/2023','8 سنوات','8 Years','28 كغ','28 kg','128 سم','128 cm')">
+                      <img src="../images/childhood/13.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#10B98122">🌱</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 2024 ══ -->
+  <div class="tl-year-card" style="animation-delay:.1s">
+    <div class="tl-year-header" onclick="toggleYear(this)">
+      <div class="tl-year-left">
+        <div>
+          <div class="tl-year-num">2024</div>
+          <div class="tl-year-sub" data-ar="السنة التاسعة — الصف الرابع" data-en="Year 9 — Grade 4">السنة التاسعة — الصف الرابع</div>
+        </div>
+        <span class="tl-year-badge" style="background:#7C3AED" data-ar="9 سنوات" data-en="Age 9">9 سنوات</span>
+      </div>
+      <div class="tl-year-right">
+        <span class="tl-event-count" data-ar="3 أحداث" data-en="3 Events">3 أحداث</span>
+        <i class="bi bi-chevron-down tl-chevron"></i>
+      </div>
+    </div>
+    <div class="tl-year-body">
+      <div class="tl-months-wrap">
+
+        <!-- فبراير 2024 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="فبراير 2024" data-en="February 2024">فبراير 2024</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدث واحد" data-en="1 Event">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="sport">
+                <div class="tl-ev-icon" style="background:#8B5CF6"><i class="bi bi-shield-fill-check"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#8B5CF61A;color:#8B5CF6" data-ar="رياضة" data-en="Sport">رياضة</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 05/02/2024</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="05/02/2024"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="المركز الثالث في الشطرنج" data-en="3rd Place Chess">المركز الثالث في الشطرنج</div>
+                  <div class="tl-ev-desc" data-ar="بطولة الشطرنج بين 40 مشاركاً." data-en="Chess tournament among 40 participants.">بطولة الشطرنج بين 40 مشاركاً.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/9.jfif','المركز الثالث في الشطرنج','3rd Place Chess','05/02/2024','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/9.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#8B5CF622">♟️</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/10.jfif','المركز الثالث في الشطرنج','3rd Place Chess','05/02/2024','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/10.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#8B5CF622">🥉</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- مايو 2024 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="مايو 2024" data-en="May 2024">مايو 2024</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدث واحد" data-en="1 Event">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="honor">
+                <div class="tl-ev-icon" style="background:#F59E0B"><i class="bi bi-award-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#F59E0B1A;color:#F59E0B" data-ar="تكريم" data-en="Honor">تكريم</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 08/05/2024</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="08/05/2024"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="طالب متميز على مستوى المنطقة" data-en="Distinguished Student — District">طالب متميز على مستوى المنطقة</div>
+                  <div class="tl-ev-desc" data-ar="من أفضل 10 طلاب في المنطقة التعليمية." data-en="Top 10 students in the educational district.">من أفضل 10 طلاب في المنطقة التعليمية.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/5.jpg','طالب متميز','Distinguished Student','08/05/2024','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/5.jpg" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#F59E0B22">🌟</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/6.jfif','طالب متميز','Distinguished Student','08/05/2024','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/6.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#F59E0B22">🏅</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- فبراير 2025 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i><span data-ar="فبراير 2025" data-en="February 2025">فبراير 2025</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count" data-ar="حدث واحد" data-en="1 Event">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="success">
+                <div class="tl-ev-icon" style="background:#3B82F6"><i class="bi bi-robot"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="نجاح" data-en="Success">نجاح</span>
+                  </div>
+                  <div class="tl-ev-date-wrap">
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 14/02/2025</span>
+                    <span class="day-chip"><i class="bi bi-calendar-week-fill"></i><span class="day-text" data-date="14/02/2025"></span></span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="مشروع الروبوتيك — معرض العلوم" data-en="Robotics Project — Science Fair">مشروع الروبوتيك — معرض العلوم</div>
+                  <div class="tl-ev-desc" data-ar="بنى روبوتاً متحركاً في معرض العلوم وفاز بالتقدير الأول." data-en="Built a moving robot at the science fair and won first place.">بنى روبوتاً متحركاً في معرض العلوم وفاز بالتقدير الأول.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/11.jfif','مشروع الروبوتيك','Robotics Project','14/02/2025','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/11.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#3B82F622">🤖</div>
+                    </div>
+                    <div class="tl-ev-photo" onclick="openImgModal('../images/childhood/7.jfif','مشروع الروبوتيك','Robotics Project','14/02/2025','9 سنوات','9 Years','31 كغ','31 kg','133 سم','133 cm')">
+                      <img src="../images/childhood/7.jfif" alt="" onerror="this.style.display='none'">
+                      <div class="tl-ev-photo-placeholder" style="background:#3B82F622">🥇</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- end tl-body -->
+
+<!-- ========== IMAGE MODAL ========== -->
+<div class="img-modal-overlay" id="imgModal" onclick="handleModalClick(event)">
+  <div class="img-modal-box">
+    <div class="img-modal-img-wrap">
+      <img id="modalImg" src="" alt="">
+      <button class="img-modal-close" onclick="closeImgModal()"><i class="bi bi-x-lg"></i></button>
+      <div class="img-modal-gradient"></div>
+      <div class="img-modal-title-overlay" id="modalTitle"></div>
+    </div>
+    <div class="img-modal-info">
+      <div class="img-modal-day-badge">
+        <i class="bi bi-calendar-week-fill"></i>
+        <span id="modalDayName"></span>
+      </div>
+      <div class="img-modal-info-grid">
+        <div class="imi">
+          <div class="imi-icon" style="background:#EEF2FF;color:#4776E6"><i class="bi bi-calendar-date-fill"></i></div>
+          <div class="imi-text"><label id="modal-lbl-date">التاريخ</label><span id="modalDate"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#FFF7ED;color:#D97706"><i class="bi bi-person-fill"></i></div>
+          <div class="imi-text"><label id="modal-lbl-age">العمر</label><span id="modalAge"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#F0FDF4;color:#059669"><i class="bi bi-speedometer2"></i></div>
+          <div class="imi-text"><label id="modal-lbl-weight">الوزن</label><span id="modalWeight"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#FDF4FF;color:#9333EA"><i class="bi bi-rulers"></i></div>
+          <div class="imi-text"><label id="modal-lbl-height">الطول</label><span id="modalHeight"></span></div>
+        </div>
+      </div>
+      <div class="img-modal-footer">
+        <i class="bi bi-building"></i>
+        <span id="modalSchool">المدرسة الابتدائية</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile_teen.html"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_adolescence.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_adolescence.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_adolescence.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="mobile-nav-link active" href="timeline_adolescence.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+/* ===== LANGUAGE ===== */
+const arDays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const enDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+let currentLang = localStorage.getItem('lang') || 'ar';
+
+function getDayName(dateStr, lang) {
+  const p = dateStr.split('/');
+  if(p.length !== 3) return '';
+  const d = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+  if(isNaN(d)) return '';
+  return lang === 'ar' ? 'يوم ' + arDays[d.getDay()] : enDays[d.getDay()];
+}
+
+function fillDayChips(lang) {
+  document.querySelectorAll('.day-text[data-date]').forEach(el => {
+    el.textContent = getDayName(el.dataset.date, lang);
+  });
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang === 'ar' ? 'ar' : 'en';
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const bsLink = document.getElementById('bsLink');
+  if(bsLink) bsLink.href = lang === 'ar'
+    ? 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
+    : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+  const lbl = document.getElementById('langLabel');
+  if(lbl) lbl.textContent = lang === 'ar' ? 'EN' : 'ع';
+  document.querySelectorAll('[data-ar]').forEach(el => {
+    el.textContent = lang === 'ar' ? el.dataset.ar : el.dataset.en;
+  });
+  const td = document.getElementById('todayDate');
+  if(td) td.textContent = new Date().toLocaleDateString(
+    lang === 'ar' ? 'ar-SA' : 'en-GB',
+    {weekday:'long', year:'numeric', month:'long', day:'numeric'}
+  );
+  fillDayChips(lang);
+  if(_modalData.date) _renderModal();
+}
+
+function toggleLang() { applyLang(currentLang === 'ar' ? 'en' : 'ar'); }
+
+// init
+const td = document.getElementById('todayDate');
+if(td) td.textContent = new Date().toLocaleDateString(
+  currentLang === 'ar' ? 'ar-SA' : 'en-GB',
+  {weekday:'long', year:'numeric', month:'long', day:'numeric'}
+);
+
+document.addEventListener('DOMContentLoaded', () => {
+  fillDayChips(currentLang);
+  if(currentLang === 'en') applyLang('en');
+  // open first year
+  const first = document.querySelector('.tl-year-card');
+  if(first) first.classList.add('open');
+});
+if(document.readyState !== 'loading') {
+  fillDayChips(currentLang);
+  if(currentLang === 'en') applyLang('en');
+}
+
+/* ===== MODAL ===== */
+let _modalData = {};
+
+function openImgModal(src, titleAr, titleEn, date, ageAr, ageEn, weightAr, weightEn, heightAr, heightEn) {
+  _modalData = {src, titleAr, titleEn, date, ageAr, ageEn, weightAr, weightEn, heightAr, heightEn};
+  _renderModal();
+  document.getElementById('imgModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function _renderModal() {
+  const lang = currentLang;
+  const d = _modalData;
+  document.getElementById('modalImg').src = d.src;
+  document.getElementById('modalTitle').textContent = lang === 'ar' ? d.titleAr : d.titleEn;
+  document.getElementById('modalDate').textContent = d.date;
+  document.getElementById('modalAge').textContent = lang === 'ar' ? d.ageAr : d.ageEn;
+  document.getElementById('modalWeight').textContent = lang === 'ar' ? d.weightAr : d.weightEn;
+  document.getElementById('modalHeight').textContent = lang === 'ar' ? d.heightAr : d.heightEn;
+  document.getElementById('modalDayName').textContent = getDayName(d.date, lang) + ' — ' + d.date;
+  document.getElementById('modalSchool').textContent = lang === 'ar' ? 'المدرسة الابتدائية' : 'Primary School';
+  const lbls = {
+    'modal-lbl-date':   {ar:'التاريخ', en:'Date'},
+    'modal-lbl-age':    {ar:'العمر',   en:'Age'},
+    'modal-lbl-weight': {ar:'الوزن',   en:'Weight'},
+    'modal-lbl-height': {ar:'الطول',   en:'Height'},
+  };
+  Object.entries(lbls).forEach(([id,t]) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = lang === 'ar' ? t.ar : t.en;
+  });
+}
+
+function closeImgModal() {
+  document.getElementById('imgModal').classList.remove('active');
+  document.body.style.overflow = '';
+  _modalData = {};
+}
+
+function handleModalClick(e) {
+  if(e.target === document.getElementById('imgModal')) closeImgModal();
+}
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeImgModal(); });
+
+/* ===== ACCORDION ===== */
+function toggleYear(header) {
+  header.closest('.tl-year-card').classList.toggle('open');
+}
+
+function toggleMonth(header) {
+  const card = header.closest('.tl-month-card');
+  const body = card.querySelector('.tl-month-body');
+  const chevron = card.querySelector('.tl-month-chevron');
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open');
+  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
+  chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+/* ===== FILTER ===== */
+function filterEvents(cat, btn) {
+  document.querySelectorAll('.tl-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tl-event').forEach(ev => {
+    ev.style.display = (cat === 'all' || ev.dataset.category === cat) ? 'flex' : 'none';
+  });
+}
+</script>
+</body>
+</html>

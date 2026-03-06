@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — الشهادات — الطفولة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .certs-body { padding: 24px }
+
+  .cert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--ease);
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp .4s ease both;
+    height: 100%
+  }
+  .cert-card:hover { box-shadow: var(--shadow-h); transform: translateY(-5px) }
+
+  .cert-banner {
+    min-height: 160px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px; color: #fff;
+    padding: 16px; text-align: center;
+    position: relative; overflow: hidden
+  }
+  .cert-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(0,0,0,.12)
+  }
+  .cert-banner i { font-size: 42px; opacity: .9; position: relative; z-index: 1 }
+  .cert-banner-title { font-size: 14px; font-weight: 700; position: relative; z-index: 1 }
+
+  .cert-body { padding: 16px 18px; flex: 1 }
+  .cbadge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; margin-bottom: 10px
+  }
+  .cert-body h4 { font-size: 15px; font-weight: 800; margin-bottom: 7px }
+  .cert-body p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 12px }
+
+  .cert-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px }
+  .cii { background: var(--bg); border-radius: 10px; padding: 8px 10px }
+  .cii label {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .05em;
+    display: block; margin-bottom: 3px
+  }
+  .cii span { font-size: 12.5px; font-weight: 700 }
+
+  /* day chip inline */
+  .day-chip {
+    display: inline-flex; align-items: center;
+    background: color-mix(in srgb, var(--sc, #4E9FDE) 12%, transparent);
+    color: var(--sc, #4E9FDE);
+    border-radius: 20px; padding: 1px 7px;
+    font-size: 10px; font-weight: 700;
+    margin-right: 5px; vertical-align: middle;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .cert-school { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px }
+  .cert-school i { color: var(--sc) }
+
+  /* thumbs — clickable */
+  .cert-thumbs {
+    display: flex; gap: 7px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border)
+  }
+  .ct {
+    flex: 1; height: 50px;
+    border-radius: 10px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    min-width: 0; position: relative;
+    cursor: pointer;
+  }
+  .ct img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .3s, opacity .2s;
+  }
+  .ct:hover img { transform: scale(1.1); opacity: .8; }
+  .ct::after {
+    content: '\F52A'; font-family: 'bootstrap-icons';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #fff;
+    background: rgba(0,0,0,.35);
+    opacity: 0; transition: opacity .2s; z-index: 2;
+  }
+  .ct:hover::after { opacity: 1; }
+
+  /* cert-banner also clickable */
+  .cert-banner { cursor: pointer; }
+  .cert-banner:hover::before { background: rgba(0,0,0,.22); }
+
+  .today-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,0,0,.08); color: inherit;
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 11px; font-weight: 700; margin-top: 6px
+  }
+
+  @media(max-width:600px) { .certs-body { padding: 16px } }
+
+  /* ===== LIGHTBOX ===== */
+  .lb-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.82); z-index: 99999;
+    align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(8px);
+  }
+  .lb-overlay.open { display: flex; animation: lbFadeIn .22s ease; }
+  @keyframes lbFadeIn { from { opacity:0 } to { opacity:1 } }
+
+  .lb-box {
+    background: var(--surface, #fff);
+    border-radius: 26px; overflow: hidden;
+    max-width: 390px; width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    animation: lbUp .28s ease; position: relative;
+  }
+  @keyframes lbUp { from { transform:translateY(28px);opacity:0 } to { transform:translateY(0);opacity:1 } }
+
+  .lb-img-wrap {
+    width: 100%; height: 260px;
+    background: #111;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .lb-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .lb-placeholder { font-size: 70px; opacity: .2; }
+
+  .lb-close {
+    position: absolute; top: 11px; left: 11px;
+    width: 34px; height: 34px;
+    background: rgba(0,0,0,.5); border: none; border-radius: 50%;
+    color: #fff; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; transition: background .2s;
+  }
+  .lb-close:hover { background: rgba(0,0,0,.8); }
+
+  .lb-info { padding: 18px 20px 22px; direction: rtl; }
+  .lb-header { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+  .lb-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .lb-header-text { font-size: 15px; font-weight: 800; }
+  .lb-header-sub { font-size: 11px; opacity: .5; font-family: 'Poppins', sans-serif; margin-right: auto; }
+
+  .lb-rows { display: flex; flex-direction: column; gap: 7px; }
+  .lb-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 13px; background: var(--bg, #f5f5f5); border-radius: 11px;
+  }
+  .lb-row-lbl { font-size: 12px; color: var(--muted, #888); display: flex; align-items: center; gap: 7px; }
+  .lb-row-lbl i { font-size: 14px; }
+  .lb-row-val { font-size: 13px; font-weight: 800; font-family: 'Poppins', sans-serif; }
+
+  /* day pill inside lightbox */
+  .lb-day-pill {
+    display: inline-flex; align-items: center;
+    background: #f0f4ff; color: #4E6FDE;
+    border-radius: 20px; padding: 2px 9px;
+    font-size: 11px; font-weight: 700;
+    margin-right: 7px;
+    font-family: 'Tajawal', sans-serif;
+  }
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab active" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#fffbf0;--ha:#d4ac0d">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="الشهادات" data-en="Certificates">الشهادات</span> <span class="sec-he"></span></h2>
+  <p data-ar="كل شهادة قصة نجاح وتميز" data-en="Every certificate tells a story of success">كل شهادة قصة نجاح وتميز</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="certs-body">
+  <div class="row g-4">
+
+    <!-- ====== CERT 1 ====== -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.00s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#f6d365,#fda085)"
+             onclick="openLB('../images/childhood/6.jfif','شهادة الطالب المتفوق','#F59E0B','12/06/2023','10:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+          <img src="../images/childhood/6.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-trophy-fill"></i>
+          <div class="cert-banner-title" data-ar="شهادة الطالب المتفوق" data-en="Excellence Award">شهادة الطالب المتفوق</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#F59E0B1A;color:#F59E0B"><i class="bi bi-trophy-fill"></i> <span data-ar="تكريم" data-en="Honor">تكريم</span></div>
+          <h4 data-ar="شهادة الطالب المتفوق" data-en="Excellence Award">شهادة الطالب المتفوق</h4>
+          <p data-ar="المركز الأول في مسابقة العلوم على مستوى المدرسة." data-en="First place in the school science competition.">المركز الأول في مسابقة العلوم على مستوى المدرسة.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span data-date="12/06/2023">12/06/2023</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span data-ar="10:00 صباحاً" data-en="10:00 AM">10:00 صباحاً</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span data-ar="8 سنوات" data-en="8 Years">8 سنوات</span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="مدرسة النور الابتدائية" data-en="Al-Noor Primary School">مدرسة النور الابتدائية</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#FFDEE9,#B5FFFC)"
+               onclick="openLB('../images/childhood/5.jpg','شهادة الطالب المتفوق','#F59E0B','12/06/2023','10:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#FFF3B0,#FFD9A0)"
+               onclick="openLB('../images/childhood/6.jfif','شهادة الطالب المتفوق','#F59E0B','12/06/2023','10:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/6.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)"
+               onclick="openLB('../images/childhood/6.jfif','شهادة الطالب المتفوق','#F59E0B','12/06/2023','10:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/6.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CERT 2 ====== -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.08s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#89f7fe,#66a6ff)"
+             onclick="openLB('../images/childhood/7.jfif','دورة البرمجة للأطفال','#3B82F6','20/09/2023','02:00 مساءً','8 سنوات','الصف الثالث','أكاديمية التقنية التربوية')">
+          <img src="../images/childhood/7.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-patch-check-fill"></i>
+          <div class="cert-banner-title" data-ar="دورة البرمجة للأطفال" data-en="Kids Coding Course">دورة البرمجة للأطفال</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#3B82F61A;color:#3B82F6"><i class="bi bi-patch-check-fill"></i> <span data-ar="نجاح" data-en="Success">نجاح</span></div>
+          <h4 data-ar="دورة البرمجة للأطفال" data-en="Kids Coding Course">دورة البرمجة للأطفال</h4>
+          <p data-ar="أتم دورة Scratch بمعدل 98٪." data-en="Completed Scratch course with 98% score.">أتم دورة Scratch بمعدل 98٪.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span data-date="20/09/2023">20/09/2023</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span data-ar="02:00 مساءً" data-en="02:00 PM">02:00 مساءً</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span data-ar="8 سنوات" data-en="8 Years">8 سنوات</span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="أكاديمية التقنية التربوية" data-en="Educational Tech Academy">أكاديمية التقنية التربوية</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"
+               onclick="openLB('../images/childhood/8.jfif','دورة البرمجة للأطفال','#3B82F6','20/09/2023','02:00 مساءً','8 سنوات','الصف الثالث','أكاديمية التقنية التربوية')">
+            <img src="../images/childhood/8.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"
+               onclick="openLB('../images/childhood/5.jpg','دورة البرمجة للأطفال','#3B82F6','20/09/2023','02:00 مساءً','8 سنوات','الصف الثالث','أكاديمية التقنية التربوية')">
+            <img src="../images/childhood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)"
+               onclick="openLB('../images/childhood/7.jfif','دورة البرمجة للأطفال','#3B82F6','20/09/2023','02:00 مساءً','8 سنوات','الصف الثالث','أكاديمية التقنية التربوية')">
+            <img src="../images/childhood/7.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CERT 3 ====== -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.16s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"
+             onclick="openLB('../images/childhood/9.jfif','المركز الثالث بالشطرنج','#8B5CF6','05/02/2024','11:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+          <img src="../images/childhood/9.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-shield-fill-check"></i>
+          <div class="cert-banner-title" data-ar="المركز الثالث بالشطرنج" data-en="3rd Place Chess">المركز الثالث بالشطرنج</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#8B5CF61A;color:#8B5CF6"><i class="bi bi-shield-fill-check"></i> <span data-ar="بطولة" data-en="Sport">بطولة</span></div>
+          <h4 data-ar="المركز الثالث بالشطرنج" data-en="3rd Place Chess">المركز الثالث بالشطرنج</h4>
+          <p data-ar="بطولة الشطرنج بين 40 مشاركاً." data-en="Chess tournament among 40 participants.">بطولة الشطرنج بين 40 مشاركاً.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span data-date="05/02/2024">05/02/2024</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span data-ar="11:00 صباحاً" data-en="11:00 AM">11:00 صباحاً</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span data-ar="8 سنوات" data-en="8 Years">8 سنوات</span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="مدرسة النور الابتدائية" data-en="Al-Noor Primary School">مدرسة النور الابتدائية</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#f6d365,#fda085)"
+               onclick="openLB('../images/childhood/11.jfif','المركز الثالث بالشطرنج','#8B5CF6','05/02/2024','11:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/11.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"
+               onclick="openLB('../images/childhood/5.jpg','المركز الثالث بالشطرنج','#8B5CF6','05/02/2024','11:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)"
+               onclick="openLB('../images/childhood/9.jfif','المركز الثالث بالشطرنج','#8B5CF6','05/02/2024','11:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/9.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CERT 4 ====== -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.24s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)"
+             onclick="openLB('../images/childhood/12.jfif','مبادرة تشجير المدرسة','#10B981','10/11/2023','09:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+          <img src="../images/childhood/12.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-heart-fill"></i>
+          <div class="cert-banner-title" data-ar="مبادرة تشجير المدرسة" data-en="School Greening Initiative">مبادرة تشجير المدرسة</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#10B9811A;color:#10B981"><i class="bi bi-heart-fill"></i> <span data-ar="تطوع" data-en="Volunteer">تطوع</span></div>
+          <h4 data-ar="مبادرة تشجير المدرسة" data-en="School Greening Initiative">مبادرة تشجير المدرسة</h4>
+          <p data-ar="شارك في زرع 20 شجرة ضمن المبادرة الوطنية." data-en="Participated in planting 20 trees.">شارك في زرع 20 شجرة ضمن المبادرة الوطنية.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span data-date="10/11/2023">10/11/2023</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span data-ar="09:00 صباحاً" data-en="09:00 AM">09:00 صباحاً</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span data-ar="8 سنوات" data-en="8 Years">8 سنوات</span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="مدرسة النور الابتدائية" data-en="Al-Noor Primary School">مدرسة النور الابتدائية</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)"
+               onclick="openLB('../images/childhood/13.jfif','مبادرة تشجير المدرسة','#10B981','10/11/2023','09:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/13.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#E0EAFC,#CFDEF3)"
+               onclick="openLB('../images/childhood/5.jpg','مبادرة تشجير المدرسة','#10B981','10/11/2023','09:00 صباحاً','8 سنوات','الصف الرايع','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#FDE8FF,#F3BAFF)"
+               onclick="openLB('../images/childhood/12.jfif','مبادرة تشجير المدرسة','#10B981','10/11/2023','09:00 صباحاً','8 سنوات','الصف الثالث','مدرسة النور الابتدائية')">
+            <img src="../images/childhood/12.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lb-overlay" id="lbOverlay" onclick="lbBgClick(event)">
+  <div class="lb-box" id="lbBox">
+    <button class="lb-close" onclick="closeLB()"><i class="bi bi-x"></i></button>
+    <div class="lb-img-wrap" id="lbImgWrap"></div>
+    <div class="lb-info">
+      <div class="lb-header">
+        <span class="lb-color-dot" id="lbColorDot"></span>
+        <span class="lb-header-text" id="lbHeaderText"></span>
+      </div>
+      <div class="lb-rows" id="lbRows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link active" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="mobile-nav-link" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  // today date
+  const td = document.getElementById('todayDate');
+  if (td) td.textContent = new Date().toLocaleDateString('ar-SA', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric', numberingSystem:'latn'
+  });
+
+  // ================================================================
+  //  HELPERS
+  // ================================================================
+  function parseDate(str) {
+    const [d, m, y] = str.split('/');
+    return new Date(+y, +m - 1, +d);
+  }
+
+  // Returns Arabic day name: الأحد، الاثنين ...
+  function getDayNameAr(dateStr) {
+    return parseDate(dateStr).toLocaleDateString('ar-SA', { weekday: 'long' });
+  }
+
+  // Returns English short day: Sun, Mon ...
+  function getDayNameEn(dateStr) {
+    return parseDate(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+  }
+
+  // ================================================================
+  //  INJECT DAY CHIPS in .cii date spans
+  // ================================================================
+  function renderDayChips() {
+    const isEn = document.documentElement.getAttribute('lang') === 'en';
+    document.querySelectorAll('[data-date]').forEach(sp => {
+      const dateStr = sp.getAttribute('data-date');
+      const day = isEn ? getDayNameEn(dateStr) : getDayNameAr(dateStr);
+      sp.innerHTML = `${dateStr} <span class="day-chip">${day}</span>`;
+    });
+  }
+
+  renderDayChips();
+
+  // Re-render when lang toggles
+  const _origToggle = window.toggleLang;
+  window.toggleLang = function() {
+    if (_origToggle) _origToggle();
+    renderDayChips();
+  };
+
+  // ================================================================
+  //  LIGHTBOX
+  // ================================================================
+  function openLB(imgSrc, title, color, date, time, age, grade, school) {
+    const wrap = document.getElementById('lbImgWrap');
+    wrap.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = imgSrc; img.alt = title;
+    img.onerror = function() { this.outerHTML = '<div class="lb-placeholder">🏆</div>'; };
+    wrap.appendChild(img);
+
+    document.getElementById('lbColorDot').style.background = color;
+    const ht = document.getElementById('lbHeaderText');
+    ht.textContent = title; ht.style.color = color;
+
+    const isEn = document.documentElement.getAttribute('lang') === 'en';
+    const dayName = isEn ? getDayNameEn(date) : getDayNameAr(date);
+
+    document.getElementById('lbRows').innerHTML = `
+      <div class="lb-row">
+        <span class="lb-row-lbl"><i class="bi bi-calendar3" style="color:${color}"></i>${isEn ? 'Date' : 'التاريخ'}</span>
+        <span class="lb-row-val"><span class="lb-day-pill">${dayName}</span>${date}</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-row-lbl"><i class="bi bi-clock" style="color:${color}"></i>${isEn ? 'Time' : 'الوقت'}</span>
+        <span class="lb-row-val">${time}</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-row-lbl"><i class="bi bi-hourglass-split" style="color:${color}"></i>${isEn ? 'Age' : 'العمر'}</span>
+        <span class="lb-row-val">${age}</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-row-lbl"><i class="bi bi-mortarboard-fill" style="color:${color}"></i>${isEn ? 'Grade' : 'السنة الدراسية'}</span>
+        <span class="lb-row-val">${grade}</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-row-lbl"><i class="bi bi-building" style="color:${color}"></i>${isEn ? 'School' : 'المدرسة'}</span>
+        <span class="lb-row-val" style="font-size:11px">${school}</span>
+      </div>`;
+
+    document.getElementById('lbOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLB() {
+    document.getElementById('lbOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function lbBgClick(e) {
+    if (e.target === document.getElementById('lbOverlay')) closeLB();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLB();
+  });
+</script>
+</body>
+</html>

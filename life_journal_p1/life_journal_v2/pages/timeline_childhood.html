@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — السنوات والأشهر</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+.tl-body{padding:24px;max-width:900px;margin:0 auto}
+.today-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.08);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-top:6px}
+/* ── بطاقة السنة ── */
+.tl-year-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);transition:var(--ease);animation:fadeUp .4s ease both}
+.tl-year-card:hover{box-shadow:var(--shadow-h)}
+.tl-year-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;user-select:none;transition:background .2s;gap:12px}
+.tl-year-header:hover,.tl-year-card.open .tl-year-header{background:var(--sbg)}
+.tl-year-left{display:flex;align-items:center;gap:14px}
+.tl-year-num{font-size:22px;font-weight:900}
+.tl-year-sub{font-size:12px;color:var(--muted)}
+.tl-year-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;color:#fff}
+.tl-year-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tl-event-count{font-size:11px;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:3px 10px;font-weight:700}
+.tl-chevron{font-size:16px;color:var(--muted);transition:transform .3s}
+.tl-year-card.open .tl-chevron{transform:rotate(180deg)}
+/* ── المحتوى (الأشهر) ── */
+.tl-year-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.tl-year-card.open .tl-year-body{max-height:9999px}
+.tl-months-wrap{padding:0 20px 20px}
+/* ── بطاقة الشهر ── */
+.tl-month-card{border:1px solid var(--border);border-radius:18px;margin-bottom:12px;overflow:hidden;background:var(--bg)}
+.tl-month-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;cursor:pointer;user-select:none;transition:background .2s}
+.tl-month-header:hover{background:var(--sbg)}
+.tl-month-name{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}
+.tl-month-name i{color:var(--sc);font-size:14px}
+.tl-month-count{font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2px 8px;font-weight:700}
+.tl-month-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.tl-month-card.open .tl-month-body{max-height:9999px}
+.tl-month-chevron{font-size:13px;color:var(--muted);transition:transform .3s}
+.tl-month-card.open .tl-month-chevron{transform:rotate(180deg)}
+/* ── الأحداث ── */
+.tl-events-list{padding:10px 18px 14px;display:flex;flex-direction:column;gap:10px}
+.tl-event{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;transition:var(--ease);cursor:pointer}
+.tl-event:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--sc)}
+.tl-ev-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl-ev-icon i{font-size:15px;color:#fff}
+.tl-ev-body{flex:1;min-width:0}
+.tl-ev-header{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.tl-ev-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tl-ev-date{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.tl-ev-date i{color:var(--sc);font-size:11px}
+.tl-ev-title{font-size:13px;font-weight:800;margin-bottom:3px}
+.tl-ev-desc{font-size:12px;color:var(--muted);line-height:1.55}
+/* صور الحدث */
+.tl-ev-photos{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.tl-ev-photo{width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .2s;position:relative}
+.tl-ev-photo:hover{transform:scale(1.08)}
+.tl-ev-photo img{width:100%;height:100%;object-fit:cover}
+.tl-ev-photo-more{width:52px;height:52px;border-radius:10px;background:var(--bg);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--muted)}
+/* ── Lightbox ── */
+.lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:16px}
+.lb-overlay.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.lb-box{max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;gap:12px}
+.lb-img{max-width:100%;max-height:70vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);object-fit:contain}
+.lb-info{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 18px;color:#fff;text-align:center}
+.lb-info h4{font-size:14px;font-weight:800;margin-bottom:3px}
+.lb-info p{font-size:11px;color:rgba(255,255,255,.6);margin:0}
+.lb-close{position:fixed;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;z-index:10001}
+.lb-close:hover{background:rgba(239,68,68,.5)}
+/* ── فلاتر ── */
+.tl-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.tl-filter-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:var(--ease);font-family:inherit}
+.tl-filter-btn:hover,.tl-filter-btn.active{background:var(--sc);border-color:var(--sc);color:#fff}
+@media(max-width:576px){.tl-body{padding:16px}.tl-year-header{padding:14px 16px}.tl-months-wrap{padding:0 12px 16px}}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile.html"><i class="bi bi-house-fill"></i><span data-ar=" الرئيسية" data-en=" Home"> الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar=" الولادة" data-en=" Birth"> الولادة</span></a>
+  <a class="page-tab" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar=" الطول" data-en=" Height"> الطول</span></a>
+  <a class="page-tab" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar=" الشهادات" data-en=" Certificates"> الشهادات</span></a>
+  <a class="page-tab" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar=" التعليم" data-en=" Education"> التعليم</span></a>
+  <a class="page-tab active" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar=" السنوات" data-en=" Timeline"> السنوات</span></a>
+</div>
+<div class="sec-hero" style="--hf:#fafafa;--ha:#555">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="السنوات والأشهر" data-en="Years & Months">السنوات والأشهر</span> <span class="sec-he"></span></h2>
+  <p data-ar="كل سنة مقسمة بأشهرها وما تم تسجيله فيها" data-en="Each year split by months and recorded events">كل سنة مقسمة بأشهرها وما تم تسجيله فيها</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+<div class="tl-body">
+  <!-- فلاتر -->
+  <div class="tl-filters">
+    <button class="tl-filter-btn active" onclick="filterEvents('all',this)" data-ar="الكل" data-en="All">الكل</button>
+    <button class="tl-filter-btn" onclick="filterEvents('honor',this)" data-ar="تكريم" data-en="Honor">تكريم 🏆</button>
+    <button class="tl-filter-btn" onclick="filterEvents('success',this)" data-ar="نجاح" data-en="Success">نجاح ✅</button>
+    <button class="tl-filter-btn" onclick="filterEvents('graduation',this)" data-ar="تخرج" data-en="Graduation">تخرج 🎓</button>
+    <button class="tl-filter-btn" onclick="filterEvents('sport',this)" data-ar="رياضة" data-en="Sport">رياضة ⚽</button>
+    <button class="tl-filter-btn" onclick="filterEvents('volunteer',this)" data-ar="تطوع" data-en="Volunteer">تطوع 💚</button>
+  </div>
+
+  <!-- ══════════════════ سنة 2023 ══════════════════ -->
+  <div class="tl-year-card" style="animation-delay:0s">
+    <div class="tl-year-header" onclick="toggleYear(this)">
+      <div class="tl-year-left">
+        <div>
+          <div class="tl-year-num">2023</div>
+          <div class="tl-year-sub" data-ar="السنة الثامنة — الصف الثالث" data-en="Year 8 — Grade 3">السنة الثامنة — الصف الثالث</div>
+        </div>
+        <span class="tl-year-badge" style="background:#E8630A" data-ar="8 سنوات" data-en="Age 8">8 سنوات</span>
+      </div>
+      <div class="tl-year-right">
+        <span class="tl-event-count">3 أحداث</span>
+        <i class="bi bi-chevron-down tl-chevron"></i>
+      </div>
+    </div>
+    <div class="tl-year-body">
+      <div class="tl-months-wrap">
+
+        <!-- يونيو 2023 -->
+        <div class="tl-month-card open">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i> <span data-ar="يونيو 2023" data-en="June 2023">يونيو 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron" style="transform:rotate(180deg)"></i>
+            </div>
+          </div>
+          <div class="tl-month-body" style="max-height:9999px">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="honor" onclick="openLightbox('../images/childhood/6.jfif','شهادة الطالب المتفوق','المركز الأول في مسابقة العلوم — 12/06/2023')">
+                <div class="tl-ev-icon" style="background:#F59E0B"><i class="bi bi-trophy-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#F59E0B1A;color:#F59E0B" data-ar="تكريم" data-en="Honor">تكريم</span>
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023 ·الاثنين</span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="شهادة الطالب المتفوق" data-en="Excellence Award">شهادة الطالب المتفوق</div>
+                  <div class="tl-ev-desc" data-ar="المركز الأول في مسابقة العلوم على مستوى المدرسة." data-en="First place in school science competition.">المركز الأول في مسابقة العلوم على مستوى المدرسة.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo"><img src="../images/childhood/6.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                    <div class="tl-ev-photo"><img src="../images/childhood/5.jpg" alt="" onerror="this.parentElement.style.display='none'"></div>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+
+        <!-- سبتمبر 2023 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i> <span data-ar="سبتمبر 2023" data-en="September 2023">سبتمبر 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="success">
+                <div class="tl-ev-icon" style="background:#3B82F6"><i class="bi bi-cpu-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="نجاح" data-en="Success">نجاح</span>
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023 ·الاثنين</span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="دورة البرمجة Scratch" data-en="Scratch Coding Course">دورة البرمجة Scratch</div>
+                  <div class="tl-ev-desc" data-ar="أتم الدورة بمعدل 98٪." data-en="Completed with 98% score.">أتم الدورة بمعدل 98٪.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openLightbox('../images/childhood/7.jfif','دورة البرمجة','')"><img src="../images/childhood/7.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                    <div class="tl-ev-photo" onclick="openLightbox('../images/childhood/8.jfif','دورة البرمجة شهادة الإتمام','')"><img src="../images/childhood/8.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- نوفمبر 2023 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i> <span data-ar="نوفمبر 2023" data-en="November 2023">نوفمبر 2023</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="volunteer">
+                <div class="tl-ev-icon" style="background:#10B981"><i class="bi bi-tree-fill"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#10B9811A;color:#10B981" data-ar="تطوع" data-en="Volunteer">تطوع</span>
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023 ·الاثنين</span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="مبادرة تشجير المدرسة" data-en="School Greening Initiative">مبادرة تشجير المدرسة</div>
+                  <div class="tl-ev-desc" data-ar="شارك في زرع 20 شجرة ضمن المبادرة الوطنية." data-en="Participated in planting 20 trees.">شارك في زرع 20 شجرة ضمن المبادرة الوطنية.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openLightbox('../images/childhood/12.jfif','مبادرة التشجير','')"><img src="../images/childhood/12.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                    <div class="tl-ev-photo" onclick="openLightbox('../images/childhood/13.jfif','مبادرة التشجير','')"><img src="../images/childhood/13.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ سنة 2024 ══════════════════ -->
+  <div class="tl-year-card" style="animation-delay:.1s">
+    <div class="tl-year-header" onclick="toggleYear(this)">
+      <div class="tl-year-left">
+        <div>
+          <div class="tl-year-num">2024</div>
+          <div class="tl-year-sub" data-ar="السنة التاسعة — الصف الرابع" data-en="Year 9 — Grade 4">السنة التاسعة — الصف الرابع</div>
+        </div>
+        <span class="tl-year-badge" style="background:#7C3AED" data-ar="9 سنوات" data-en="Age 9">9 سنوات</span>
+      </div>
+      <div class="tl-year-right">
+        <span class="tl-event-count">2 أحداث</span>
+        <i class="bi bi-chevron-down tl-chevron"></i>
+      </div>
+    </div>
+    <div class="tl-year-body">
+      <div class="tl-months-wrap">
+
+        <!-- فبراير 2024 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i> <span data-ar="فبراير 2024" data-en="February 2024">فبراير 2024</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="sport">
+                <div class="tl-ev-icon" style="background:#8B5CF6"><i class="bi bi-shield-fill-check"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#8B5CF61A;color:#8B5CF6" data-ar="بطولة" data-en="Sport">بطولة</span>
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023 ·الاثنين</span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="المركز الثالث في الشطرنج" data-en="3rd Place Chess">المركز الثالث في الشطرنج</div>
+                  <div class="tl-ev-desc" data-ar="بطولة الشطرنج بين 40 مشاركاً." data-en="Chess tournament among 40 participants.">بطولة الشطرنج بين 40 مشاركاً.</div>
+                  <div class="tl-ev-photos">
+                    <div class="tl-ev-photo" onclick="openLightbox('../images/childhood/9.jfif','بطولة الشطرنج','المركز الثالث')"><img src="../images/childhood/9.jfif" alt="" onerror="this.parentElement.style.display='none'"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- فبراير 2025 -->
+        <div class="tl-month-card">
+          <div class="tl-month-header" onclick="toggleMonth(this)">
+            <span class="tl-month-name"><i class="bi bi-calendar3"></i> <span data-ar="فبراير 2025" data-en="February 2025">فبراير 2025</span></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="tl-month-count">حدث واحد</span>
+              <i class="bi bi-chevron-down tl-month-chevron"></i>
+            </div>
+          </div>
+          <div class="tl-month-body">
+            <div class="tl-events-list">
+              <div class="tl-event" data-category="success">
+                <div class="tl-ev-icon" style="background:#3B82F6"><i class="bi bi-robot"></i></div>
+                <div class="tl-ev-body">
+                  <div class="tl-ev-header">
+                    <span class="tl-ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="نجاح" data-en="Success">نجاح</span>
+                    <span class="tl-ev-date"><i class="bi bi-calendar3"></i> 12/06/2023 ·الاثنين</span>
+                  </div>
+                  <div class="tl-ev-title" data-ar="مشروع الروبوتيك — معرض العلوم" data-en="Robotics Project — Science Fair">مشروع الروبوتيك — معرض العلوم</div>
+                  <div class="tl-ev-desc" data-ar="بنى روبوتاً متحركاً في معرض العلوم وفاز بالتقدير الأول." data-en="Built a moving robot at the science fair and won first place.">بنى روبوتاً متحركاً في معرض العلوم وفاز بالتقدير الأول.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- end tl-body -->
+
+<!-- Lightbox -->
+<div class="lb-overlay" id="lbOverlay" onclick="if(event.target===this)closeLightboxBtn()">
+  <button class="lb-close" onclick="closeLightboxBtn()"><i class="bi bi-x-lg"></i></button>
+  <div class="lb-box">
+    <img class="lb-img" id="lbImg" src="" alt="">
+    <div class="lb-info"><h4 id="lbTitle"></h4><p id="lbDesc"></p></div>
+  </div>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile.html"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="mobile-nav-link active" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+const td=document.getElementById('todayDate');
+if(td) td.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+function toggleYear(header){
+  const card=header.closest('.tl-year-card');
+  card.classList.toggle('open');
+}
+function toggleMonth(header){
+  const card=header.closest('.tl-month-card');
+  const body=card.querySelector('.tl-month-body');
+  const chevron=card.querySelector('.tl-month-chevron');
+  const isOpen=card.classList.contains('open');
+  card.classList.toggle('open');
+  body.style.maxHeight=isOpen?'0':body.scrollHeight+'px';
+  chevron.style.transform=isOpen?'':'rotate(180deg)';
+}
+
+function filterEvents(cat,btn){
+  document.querySelectorAll('.tl-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tl-event').forEach(ev=>{
+    if(cat==='all'||ev.dataset.category===cat){ev.style.display='flex';}
+    else{ev.style.display='none';}
+  });
+}
+
+function openLightbox(src,title,desc){
+  document.getElementById('lbImg').src=src;
+  document.getElementById('lbTitle').textContent=title||'';
+  document.getElementById('lbDesc').textContent=desc||'';
+  document.getElementById('lbOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightboxBtn(){document.getElementById('lbOverlay').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightboxBtn();});
+
+/* افتح السنة الأولى تلقائياً */
+document.addEventListener('DOMContentLoaded',()=>{
+  const first=document.querySelector('.tl-year-card');
+  if(first) first.classList.add('open');
+});
+</script>
+</body>
+</html>

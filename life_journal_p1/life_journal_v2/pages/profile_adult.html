@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — الرئيسية — الطفولة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/profile.css">
+
+<style>
+/* ===== RESPONSIVE LAYOUT ===== */
+.main-wrapper {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
+  direction: ltr;
+}
+
+#leftSidebar {
+  padding: 16px;
+  position: sticky;
+  top: 80px;
+  margin-top: 120px;
+  direction: rtl;
+}
+
+/* Hide sidebar on tablet/mobile */
+@media (max-width: 900px) {
+  .main-wrapper {
+    grid-template-columns: 1fr !important;
+  }
+  #leftSidebar {
+    display: none;
+  }
+}
+
+/* Photos mini grid */
+.photos-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.photo-mini {
+  border-radius: 8px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.photo-mini:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  z-index: 2;
+}
+
+.photo-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.photo-mini:hover img {
+  transform: scale(1.08);
+}
+
+/* Profile top — stats pushed to end */
+.pf-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pf-stats {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* On small screens, stats go full width */
+@media (max-width: 600px) {
+  .pf-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pf-stats {
+    margin-left: 0 !important;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+/* ===== COVER ===== */
+#animatedCover {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+/* ===== fp-thumb clickable ===== */
+.fp-thumb {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fp-thumb:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  z-index: 2;
+  position: relative;
+}
+
+/* ===== FIRST MOMENTS WIDGET ===== */
+.first-moments-widget {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.sw-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #2d2d2d;
+  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #f8f9ff, #fff);
+}
+
+.sw-title i { color: #6c63ff; font-size: 17px; }
+
+.moment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.moment-item:last-child { border-bottom: none; }
+
+.moment-item:hover {
+  background: #f9f8ff;
+  transform: translateX(-3px);
+}
+
+.moment-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.moment-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.moment-text { text-align: right; }
+
+.moment-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a2e;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.moment-date {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: flex-end;
+}
+
+.moment-date i { color: #6c63ff; font-size: 11px; }
+
+.moment-arrow {
+  color: #ccc;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.moment-item:hover .moment-arrow {
+  transform: translateX(-4px);
+  color: #6c63ff;
+}
+
+.moment-media-badges {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: flex-end;
+}
+
+.media-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge-video  { background: #fff0f0; color: #e53935; }
+.badge-audio  { background: #f0fff4; color: #2e7d32; }
+.badge-photo  { background: #f0f4ff; color: #1565c0; }
+.badge-drawing{ background: #fff8f0; color: #e65100; }
+
+/* ===== LIGHTBOX ===== */
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,15,30,0.75);
+  z-index: 99999;
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: lbFadeIn 0.2s ease;
+}
+
+.lightbox-overlay.active { display: flex; }
+
+@keyframes lbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lightbox-card {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  max-width: 520px;
+  width: 100%;
+  overflow: hidden;
+  animation: lbSlideUp 0.3s cubic-bezier(0.34,1.4,0.64,1);
+  direction: rtl;
+}
+
+@keyframes lbSlideUp {
+  from { transform: translateY(30px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.lightbox-img-wrap {
+  width: 100%;
+  position: relative;
+  background: #f0f0f0;
+  aspect-ratio: 16/9;
+}
+
+.lightbox-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lightbox-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.lightbox-card-title {
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.lightbox-card-title i { color: #E8630A; }
+
+.lightbox-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, color 0.2s;
+}
+
+.lightbox-close:hover {
+  background: #ffe0e0;
+  color: #e53935;
+  transform: rotate(90deg);
+}
+
+/* Info chips */
+.lightbox-info {
+  padding: 14px 18px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  direction: rtl;
+}
+
+.lb-info-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f7f8ff;
+  border: 1px solid #eceeff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: #444;
+  font-size: 12px;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 600;
+}
+
+.lb-info-chip.full { grid-column: 1 / -1; }
+
+.lb-info-chip i {
+  font-size: 14px;
+  color: #E8630A;
+  flex-shrink: 0;
+}
+
+.lb-info-chip .chip-label {
+  font-size: 10px;
+  color: #999;
+  display: block;
+  margin-bottom: 1px;
+}
+
+.lb-info-chip .chip-val {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1a1a2e;
+}
+
+/* ===== MOMENT MODAL ===== */
+.moment-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInOverlay 0.25s ease;
+}
+
+.moment-modal-overlay.active { display: flex; }
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.moment-modal {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.35);
+  animation: slideUpModal 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  direction: rtl;
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-header {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon-big {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.modal-title {
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.modal-subtitle { font-size: 12px; color: #888; margin-top: 2px; }
+
+.modal-close-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%; border: none;
+  background: #f5f5f5;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px; color: #666;
+  transition: all 0.2s; flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background: #ffe0e0;
+  color: #e53935;
+  transform: rotate(90deg);
+}
+
+.modal-body { padding: 20px; }
+
+.media-section { margin-bottom: 20px; }
+
+.media-section-title {
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.media-video-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1a1a1a;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-video-wrap video {
+  width: 100%;
+  border-radius: 14px;
+  display: block;
+}
+
+.video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #aaa;
+  padding: 30px;
+  text-align: center;
+}
+
+.video-placeholder i { font-size: 48px; color: #555; }
+.video-placeholder p  { font-size: 13px; margin: 0; color: #777; }
+
+.audio-player-custom {
+  background: linear-gradient(135deg, #f0fff4, #e8f5e9);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #c8e6c9;
+}
+
+.audio-play-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #43a047, #66bb6a);
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(67,160,71,0.35);
+  transition: all 0.2s;
+}
+
+.audio-play-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(67,160,71,0.45);
+}
+
+.audio-play-btn i { font-size: 20px; color: #fff; }
+
+.audio-info { flex: 1; }
+.audio-info p { margin: 0; font-family: 'Tajawal', sans-serif; font-weight: 600; font-size: 14px; color: #2e7d32; }
+.audio-info span { font-size: 12px; color: #81c784; }
+
+.audio-waves { display: flex; align-items: center; gap: 3px; height: 24px; }
+.audio-waves span { width: 3px; background: #43a047; border-radius: 3px; animation: waveAnim 1.2s ease-in-out infinite; }
+.audio-waves span:nth-child(1) { height: 8px;  animation-delay: 0s;    }
+.audio-waves span:nth-child(2) { height: 16px; animation-delay: 0.15s; }
+.audio-waves span:nth-child(3) { height: 24px; animation-delay: 0.3s;  }
+.audio-waves span:nth-child(4) { height: 16px; animation-delay: 0.45s; }
+.audio-waves span:nth-child(5) { height: 8px;  animation-delay: 0.6s;  }
+.audio-waves.paused span { animation-play-state: paused; }
+
+@keyframes waveAnim {
+  0%,100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1);   }
+}
+
+audio { display: none; }
+
+.modal-photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-photo-item {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.modal-photo-item img { width: 100%; height: 100%; object-fit: cover; }
+
+.photo-placeholder-icon { font-size: 36px; opacity: 0.4; }
+
+.modal-drawing-item {
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff8f0, #ffe0b2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  border: 2px dashed #ffcc80;
+}
+
+.modal-drawing-item img { width: 100%; border-radius: 12px; display: block; }
+
+.drawing-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #e65100;
+  padding: 30px;
+  text-align: center;
+}
+
+.drawing-placeholder i { font-size: 48px; opacity: 0.6; }
+.drawing-placeholder p { margin: 0; font-size: 13px; font-family: 'Tajawal', sans-serif; opacity: 0.8; }
+
+/* ===== Feed responsive ===== */
+/* ===== MOBILE SIDEBAR SECTIONS ===== */
+/* Hidden on desktop — shown only on mobile/tablet */
+.mobile-sidebar-sections {
+  display: none;
+  padding: 0 16px;
+  direction: rtl;
+}
+
+.mob-widget {
+  margin-bottom: 16px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #eee);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* Quick info: 2-column grid on mobile */
+.mob-qi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.mob-qi-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+  border-left: 1px solid var(--border, #f0f0f0);
+}
+
+.mob-qi-item:nth-child(odd) { border-left: none; }
+
+.mob-qi-full {
+  grid-column: 1 / -1;
+  border-left: none;
+}
+
+.mob-qi-full:last-child { border-bottom: none; }
+
+.mob-qi-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--sc, #4E9FDE) 12%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mob-qi-icon i {
+  color: var(--sc, #4E9FDE);
+  font-size: 14px;
+}
+
+/* Show mobile sections, hide sidebar on ≤900px */
+@media (max-width: 900px) {
+  .mobile-sidebar-sections { display: block; }
+}
+
+@media (max-width: 480px) {
+  .fp-photos {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .fp-meta {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .lightbox-info {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill active" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+
+<div class="page-tabs">
+  <a class="page-tab active" href="profile_adult.html"><i class="bi bi-house-fill"></i><span data-ar=" الرئيسية" data-en=" Home"> الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar=" الولادة" data-en=" Birth"> الولادة</span></a>
+  <a class="page-tab" href="height_adulthood.html"><i class="bi bi-rulers"></i><span data-ar=" الطول" data-en=" Height"> الطول</span></a>
+  <a class="page-tab" href="certs_adulthood.html"><i class="bi bi-award-fill"></i><span data-ar=" الشهادات" data-en=" Certificates"> الشهادات</span></a>
+  <a class="page-tab" href="edu_adulthood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar=" التعليم" data-en=" Education"> التعليم</span></a>
+  <a class="page-tab" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="profile-cover" id="animatedCover">
+  <svg style="position:absolute;inset:0;width:100%;height:100%;display:block;" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#003D2B"/>
+        <stop offset="35%"  stop-color="#006B5E"/>
+        <stop offset="65%"  stop-color="#0097A7"/>
+        <stop offset="100%" stop-color="#01579B"/>
+      </linearGradient>
+      <linearGradient id="w1" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#00695C" stop-opacity="0.9"/>
+        <stop offset="50%"  stop-color="#00ACC1" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#1565C0" stop-opacity="0.8"/>
+      </linearGradient>
+      <linearGradient id="w2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#1B5E20" stop-opacity="0.85"/>
+        <stop offset="40%"  stop-color="#00838F" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#0D47A1" stop-opacity="0.75"/>
+      </linearGradient>
+      <linearGradient id="w3" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"   stop-color="#002B1A" stop-opacity="0.95"/>
+        <stop offset="45%"  stop-color="#006064" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#0A2472" stop-opacity="0.85"/>
+      </linearGradient>
+      <linearGradient id="glowL" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"  stop-color="#64FFDA" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#00E5FF" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="glowR" x1="100%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%"  stop-color="#00E5FF" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#00695C" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+    </defs>
+
+    <!-- خلفية أساسية -->
+    <rect width="1200" height="220" fill="url(#bgGrad)"/>
+
+    <!-- هالة ذهبية يسار -->
+    <ellipse cx="160" cy="80" rx="280" ry="160" fill="url(#glowL)" filter="url(#soft)"/>
+    <!-- هالة برتقالية يمين -->
+    <ellipse cx="1040" cy="100" rx="260" ry="150" fill="url(#glowR)" filter="url(#soft)"/>
+
+    <!-- موجة خلفية -->
+    <path d="M0,140 C120,90 280,160 450,120 C620,80 780,150 950,110 C1080,82 1150,125 1200,105 L1200,220 L0,220 Z"
+          fill="url(#w1)" opacity="0.7"/>
+
+    <!-- موجة وسطى -->
+    <path d="M0,165 C100,125 260,175 430,145 C600,115 760,165 930,135 C1060,112 1140,148 1200,130 L1200,220 L0,220 Z"
+          fill="url(#w2)" opacity="0.8"/>
+
+    <!-- موجة أمامية -->
+    <path d="M0,188 C80,162 220,195 400,172 C580,149 740,185 920,165 C1040,150 1130,172 1200,158 L1200,220 L0,220 Z"
+          fill="url(#w3)" opacity="0.9"/>
+
+    <!-- خط ذهبي مضيء -->
+    <path d="M0,188 C80,162 220,195 400,172 C580,149 740,185 920,165 C1040,150 1130,172 1200,158"
+          stroke="rgba(0,229,255,0.55)" stroke-width="1.5" fill="none" filter="url(#glow)"/>
+
+    <!-- نقاط مضيئة ذهبية -->
+    <circle cx="95"  cy="188" r="2.5" fill="rgba(100,255,218,.8)" filter="url(#glow)"/>
+    <circle cx="320" cy="175" r="2"   fill="rgba(0,229,255,.7)"/>
+    <circle cx="600" cy="162" r="2.5" fill="rgba(100,255,218,.8)" filter="url(#glow)"/>
+    <circle cx="870" cy="168" r="2"   fill="rgba(0,229,255,.7)"/>
+    <circle cx="1100" cy="160" r="2.5" fill="rgba(100,255,218,.8)" filter="url(#glow)"/>
+
+    <!-- shimmer علوي خفيف -->
+    <rect width="1200" height="220"
+          fill="url(#bgGrad)" opacity="0"
+          style="mix-blend-mode:overlay"/>
+    <linearGradient id="topShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="rgba(255,255,255,0.08)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+    <rect width="1200" height="220" fill="url(#topShine)"/>
+  </svg>
+</div>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
+
+  <!-- LEFT SIDEBAR -->
+  <div id="leftSidebar">
+
+    <!-- Quick Info Widget -->
+    <div class="sidebar-widget">
+      <div class="sw-title"><i class="bi bi-person-lines-fill"></i><span data-ar=" نبذة سريعة" data-en=" Quick Info"> نبذة سريعة</span></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-calendar-heart-fill"></i></div><div><div class="qi-label" data-ar="تاريخ الميلاد" data-en="Birth Date">تاريخ الميلاد</div><div class="qi-value">15 March 2015</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-geo-alt-fill"></i></div><div><div class="qi-label" data-ar="مكان الميلاد" data-en="Birth Place">مكان الميلاد</div><div class="qi-value" data-ar="مستشفى الملك فهد — الرياض" data-en="King Fahd Hospital — Riyadh">مستشفى الملك فهد — الرياض</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-droplet-fill"></i></div><div><div class="qi-label" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</div><div class="qi-value">O+</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-rulers"></i></div><div><div class="qi-label" data-ar="الطول الحالي" data-en="Current Height">الطول الحالي</div><div class="qi-value">138 cm</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-activity"></i></div><div><div class="qi-label" data-ar="الوزن الحالي" data-en="Current Weight">الوزن الحالي</div><div class="qi-value">34 kg</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-building"></i></div><div><div class="qi-label" data-ar="المدرسة" data-en="School">المدرسة</div><div class="qi-value" data-ar="مدرسة النور الابتدائية" data-en="Al-Noor Primary School">مدرسة النور الابتدائية</div></div></div>
+      <div class="qi-row"><div class="qi-icon"><i class="bi bi-stars"></i></div><div><div class="qi-label" data-ar="الهوايات" data-en="Hobbies">الهوايات</div><div class="qi-value" data-ar="برمجة، شطرنج، رسم" data-en="Programming, Chess, Drawing">برمجة، شطرنج، رسم</div></div></div>
+    </div>
+
+    <!-- First Moments Widget -->
+    <div class="first-moments-widget sidebar-widget">
+      <div class="sw-title"><i class="bi bi-stars"></i><span data-ar="لحظات أول مرة" data-en="First Moments">لحظات أول مرة</span></div>
+
+      <div class="moment-item" onclick="openMomentModal('word')">
+        <i class="bi bi-chevron-left moment-arrow"></i>
+        <div class="moment-right">
+          <div class="moment-text">
+            <div class="moment-title" data-ar="أول كلمة" data-en="First Word">أول كلمة</div>
+            <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الاثنين · 15/02/2016" data-en="Mon · 15/02/2016">الاثنين · 15/02/2016</span></div>
+            <div class="moment-media-badges">
+              <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+              <span class="media-badge badge-audio" data-ar="صوت" data-en="Audio">صوت</span>
+            </div>
+          </div>
+          <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9)">💬</div>
+        </div>
+      </div>
+
+      <div class="moment-item" onclick="openMomentModal('walk')">
+        <i class="bi bi-chevron-left moment-arrow"></i>
+        <div class="moment-right">
+          <div class="moment-text">
+            <div class="moment-title" data-ar="أول خطوة" data-en="First Step">أول خطوة</div>
+            <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الأربعاء · 20/04/2016" data-en="Wed · 20/04/2016">الأربعاء · 20/04/2016</span></div>
+            <div class="moment-media-badges">
+              <span class="media-badge badge-photo" data-ar="صورة" data-en="Photo">صورة</span>
+              <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+            </div>
+          </div>
+          <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb)">👣</div>
+        </div>
+      </div>
+
+      <div class="moment-item" onclick="openMomentModal('drawing')">
+        <i class="bi bi-chevron-left moment-arrow"></i>
+        <div class="moment-right">
+          <div class="moment-text">
+            <div class="moment-title" data-ar="أول رسمة" data-en="First Drawing">أول رسمة</div>
+            <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الاثنين · 10/09/2018" data-en="Mon · 10/09/2018">الاثنين · 10/09/2018</span></div>
+            <div class="moment-media-badges">
+              <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+              <span class="media-badge badge-drawing" data-ar="رسمة" data-en="Drawing">رسمة</span>
+            </div>
+          </div>
+          <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#fff8e1,#ffecb3)">🎨</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos Widget -->
+    <div class="sidebar-widget">
+      <div class="sw-title"><i class="bi bi-images"></i><span data-ar=" الصور" data-en=" Photos"> الصور</span></div>
+      <div class="photos-mini-grid">
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FFDEE9,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'15/03/2015','الاثنين','Monday','9 yrs','138 cm','34 kg')"><img src="../images/Adulthood/1.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FFF3B0,#FFD9A0)" onclick="openLightbox(this.querySelector('img').src,'20/04/2016','الأربعاء','Wednesday','1 yr','75 cm','10 kg')"><img src="../images/Adulthood/2.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'10/09/2016','السبت','Saturday','1.5 yrs','80 cm','11 kg')"><img src="../images/Adulthood/3.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FFB3BA,#FFDFBA)" onclick="openLightbox(this.querySelector('img').src,'05/01/2018','الجمعة','Friday','2 yrs','90 cm','13 kg')"><img src="../images/Adulthood/4.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#E0EAFC,#CFDEF3)" onclick="openLightbox(this.querySelector('img').src,'12/06/2019','الأربعاء','Wednesday','4 yrs','105 cm','18 kg')"><img src="../images/Adulthood/5.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FDE8FF,#F3BAFF)" onclick="openLightbox(this.querySelector('img').src,'20/09/2020','الأحد','Sunday','5 yrs','112 cm','21 kg')"><img src="../images/Adulthood/20.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FFFDE7,#FFF9C4)" onclick="openLightbox(this.querySelector('img').src,'10/11/2021','الأربعاء','Wednesday','6 yrs','119 cm','24 kg')"><img src="../images/Adulthood/21.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)" onclick="openLightbox(this.querySelector('img').src,'03/03/2022','الخميس','Thursday','7 yrs','126 cm','28 kg')"><img src="../images/Adulthood/22.jfif" alt=""></div>
+        <div class="photo-mini" style="background:linear-gradient(135deg,#FFF8E1,#FFECB3)" onclick="openLightbox(this.querySelector('img').src,'15/03/2024','الجمعة','Friday','9 yrs','138 cm','34 kg')"><img src="../images/Adulthood/5.jfif" alt=""></div>
+      </div>
+    </div>
+
+  </div><!-- end leftSidebar -->
+
+  <!-- RIGHT COLUMN -->
+  <div style="direction:rtl; min-width:0;">
+
+    <div class="profile-body">
+      <div class="pf-top">
+        <div class="pf-av-wrap">
+          <div class="pf-av" style="background:linear-gradient(135deg,#E8630A,#ff8c42)">
+            <img src="../images/Adulthood/21.jfif" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none'">
+          </div>
+          <div class="pf-stage-lbl" data-ar="الشباب" data-en="Childhood">الشباب</div>
+        </div>
+        <div class="pf-name-blk">
+          <h2 data-ar="محمد عبدالله" data-en="Mohammed Abdullah">محمد عبدالله</h2>
+          <div class="pf-badge"><i class="bi bi-patch-check-fill"></i> <span data-ar="مرحلة الشباب" data-en="Childhood Stage">مرحلة الشباب</span></div>
+          <p class="pf-bio" data-ar="مهندس مرح يحب الاستكشاف والتعلم" data-en="A joyful child who loves exploring and learning">مهندس مرح يحب الاستكشاف والتعلم</p>
+        </div>
+        <div class="pf-stats" style="margin-left:auto;margin-right:0;">
+          <div class="pstat"><span class="pn">22</span><span class="pl" data-ar="سنوات" data-en="Years">سنوات</span></div>
+          <div class="pstat"><span class="pn">175</span><span class="pl" data-ar="سم الطول" data-en="cm Height">سم الطول</span></div>
+          <div class="pstat"><span class="pn">70</span><span class="pl" data-ar="كغ الوزن" data-en="kg Weight">كغ الوزن</span></div>
+          <div class="pstat"><span class="pn">12</span><span class="pl" data-ar="شهادة" data-en="Certs">شهادة</span></div>
+        </div>
+      </div>
+      <hr class="pf-divider"/>
+    </div>
+
+    <!-- ===== MOBILE-ONLY: Quick Info + Moments + Photos ===== -->
+    <div class="mobile-sidebar-sections">
+
+      <!-- Quick Info -->
+      <div class="sidebar-widget mob-widget">
+        <div class="sw-title"><i class="bi bi-person-lines-fill"></i><span data-ar="نبذة سريعة" data-en="Quick Info">نبذة سريعة</span></div>
+        <div class="mob-qi-grid">
+          <div class="mob-qi-item">
+            <div class="mob-qi-icon"><i class="bi bi-calendar-heart-fill"></i></div>
+            <div><div class="qi-label" data-ar="تاريخ الميلاد" data-en="Birth Date">تاريخ الميلاد</div><div class="qi-value">15 March 2015</div></div>
+          </div>
+          <div class="mob-qi-item">
+            <div class="mob-qi-icon"><i class="bi bi-droplet-fill"></i></div>
+            <div><div class="qi-label" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</div><div class="qi-value">O+</div></div>
+          </div>
+          <div class="mob-qi-item">
+            <div class="mob-qi-icon"><i class="bi bi-rulers"></i></div>
+            <div><div class="qi-label" data-ar="الطول" data-en="Height">الطول</div><div class="qi-value">138 cm</div></div>
+          </div>
+          <div class="mob-qi-item">
+            <div class="mob-qi-icon"><i class="bi bi-activity"></i></div>
+            <div><div class="qi-label" data-ar="الوزن" data-en="Weight">الوزن</div><div class="qi-value">34 kg</div></div>
+          </div>
+          <div class="mob-qi-item mob-qi-full">
+            <div class="mob-qi-icon"><i class="bi bi-geo-alt-fill"></i></div>
+            <div><div class="qi-label" data-ar="مكان الميلاد" data-en="Birth Place">مكان الميلاد</div><div class="qi-value" data-ar="مستشفى الملك فهد — الرياض" data-en="King Fahd Hospital — Riyadh">مستشفى الملك فهد — الرياض</div></div>
+          </div>
+          <div class="mob-qi-item mob-qi-full">
+            <div class="mob-qi-icon"><i class="bi bi-building"></i></div>
+            <div><div class="qi-label" data-ar="المدرسة" data-en="School">المدرسة</div><div class="qi-value" data-ar="مدرسة النور الابتدائية" data-en="Al-Noor Primary School">مدرسة النور الابتدائية</div></div>
+          </div>
+          <div class="mob-qi-item mob-qi-full">
+            <div class="mob-qi-icon"><i class="bi bi-stars"></i></div>
+            <div><div class="qi-label" data-ar="الهوايات" data-en="Hobbies">الهوايات</div><div class="qi-value" data-ar="برمجة، شطرنج، رسم" data-en="Programming, Chess, Drawing">برمجة، شطرنج، رسم</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- First Moments -->
+      <div class="first-moments-widget mob-widget">
+        <div class="sw-title"><i class="bi bi-stars"></i><span data-ar="لحظات أول مرة" data-en="First Moments">لحظات أول مرة</span></div>
+        <div class="moment-item" onclick="openMomentModal('word')">
+          <i class="bi bi-chevron-left moment-arrow"></i>
+          <div class="moment-right">
+            <div class="moment-text">
+              <div class="moment-title" data-ar="أول كلمة" data-en="First Word">أول كلمة</div>
+              <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الاثنين · 15/02/2016" data-en="Mon · 15/02/2016">الاثنين · 15/02/2016</span></div>
+              <div class="moment-media-badges">
+                <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+                <span class="media-badge badge-audio" data-ar="صوت" data-en="Audio">صوت</span>
+              </div>
+            </div>
+            <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9)">💬</div>
+          </div>
+        </div>
+        <div class="moment-item" onclick="openMomentModal('walk')">
+          <i class="bi bi-chevron-left moment-arrow"></i>
+          <div class="moment-right">
+            <div class="moment-text">
+              <div class="moment-title" data-ar="أول خطوة" data-en="First Step">أول خطوة</div>
+              <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الأربعاء · 20/04/2016" data-en="Wed · 20/04/2016">الأربعاء · 20/04/2016</span></div>
+              <div class="moment-media-badges">
+                <span class="media-badge badge-photo" data-ar="صورة" data-en="Photo">صورة</span>
+                <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+              </div>
+            </div>
+            <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb)">👣</div>
+          </div>
+        </div>
+        <div class="moment-item" onclick="openMomentModal('drawing')">
+          <i class="bi bi-chevron-left moment-arrow"></i>
+          <div class="moment-right">
+            <div class="moment-text">
+              <div class="moment-title" data-ar="أول رسمة" data-en="First Drawing">أول رسمة</div>
+              <div class="moment-date"><i class="bi bi-calendar3"></i><span data-ar="الاثنين · 10/09/2018" data-en="Mon · 10/09/2018">الاثنين · 10/09/2018</span></div>
+              <div class="moment-media-badges">
+                <span class="media-badge badge-video" data-ar="فيديو" data-en="Video">فيديو</span>
+                <span class="media-badge badge-drawing" data-ar="رسمة" data-en="Drawing">رسمة</span>
+              </div>
+            </div>
+            <div class="moment-icon-wrap" style="background:linear-gradient(135deg,#fff8e1,#ffecb3)">🎨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="sidebar-widget mob-widget">
+        <div class="sw-title"><i class="bi bi-images"></i><span data-ar="الصور" data-en="Photos">الصور</span></div>
+        <div class="photos-mini-grid">
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FFDEE9,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'15/03/2015','الاثنين','Monday','9 yrs','138 cm','34 kg')"><img src="../images/childhood/3.3.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FFF3B0,#FFD9A0)" onclick="openLightbox(this.querySelector('img').src,'20/04/2016','الأربعاء','Wednesday','1 yr','75 cm','10 kg')"><img src="../images/childhood/4.4.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'10/09/2016','السبت','Saturday','1.5 yrs','80 cm','11 kg')"><img src="../images/childhood/5.5.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FFB3BA,#FFDFBA)" onclick="openLightbox(this.querySelector('img').src,'05/01/2018','الجمعة','Friday','2 yrs','90 cm','13 kg')"><img src="../images/childhood/6.6.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#E0EAFC,#CFDEF3)" onclick="openLightbox(this.querySelector('img').src,'12/06/2019','الأربعاء','Wednesday','4 yrs','105 cm','18 kg')"><img src="../images/childhood/7.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FDE8FF,#F3BAFF)" onclick="openLightbox(this.querySelector('img').src,'20/09/2020','الأحد','Sunday','5 yrs','112 cm','21 kg')"><img src="../images/childhood/8.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FFFDE7,#FFF9C4)" onclick="openLightbox(this.querySelector('img').src,'10/11/2021','الأربعاء','Wednesday','6 yrs','119 cm','24 kg')"><img src="../images/childhood/12.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)" onclick="openLightbox(this.querySelector('img').src,'03/03/2022','الخميس','Thursday','7 yrs','126 cm','28 kg')"><img src="../images/childhood/13.jfif" alt=""></div>
+          <div class="photo-mini" style="background:linear-gradient(135deg,#FFF8E1,#FFECB3)" onclick="openLightbox(this.querySelector('img').src,'15/03/2024','الجمعة','Friday','9 yrs','138 cm','34 kg')"><img src="../images/childhood/5.jfif" alt=""></div>
+        </div>
+      </div>
+
+    </div><!-- end mobile-sidebar-sections -->
+
+    <!-- Feed posts -->
+    <div style="padding:16px 20px 16px 16px;" id="feedCol">
+
+      <!-- Post 1 -->
+      <div class="feed-post" style="animation-delay:0.0s">
+        <div class="fp-banner" style="background:linear-gradient(135deg,#f6d365,#fda085)">
+          <div class="fp-banner-overlay"></div>
+          <i class="bi bi-trophy-fill" style="font-size:52px;color:rgba(255,255,255,.88);position:relative;z-index:1"></i>
+          <div class="fp-badge-tag" data-ar="تكريم" data-en="Honor">تكريم</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-title" data-ar="شهادة الطالب المتفوق" data-en="Excellence Award">شهادة الطالب المتفوق</div>
+          <div class="fp-desc" data-ar="المركز الأول في مسابقة العلوم على مستوى المدرسة." data-en="First place in the school science competition.">المركز الأول في مسابقة العلوم على مستوى المدرسة.</div>
+          <div class="fp-meta">
+            <span><i class="bi bi-calendar3"></i> 12/06/2023 · <span data-ar="الاثنين" data-en="Monday">الاثنين</span></span>
+            <span><i class="bi bi-clock"></i> 10:00 AM</span>
+            <span><i class="bi bi-person-fill"></i> 8 <span data-ar="سنوات" data-en="Years">سنوات</span></span>
+            <span><i class="bi bi-book-fill"></i> <span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></span>
+          </div>
+          <div class="fp-photos">
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#FFDEE9,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'12/06/2023','الاثنين','Monday','8 yrs','130 cm','30 kg')"><img src="../images/childhood/6.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#FFF3B0,#FFD9A0)" onclick="openLightbox(this.querySelector('img').src,'12/06/2023','الاثنين','Monday','8 yrs','130 cm','30 kg')"><img src="../images/childhood/5.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'12/06/2023','الاثنين','Monday','8 yrs','130 cm','30 kg')"><img src="../images/childhood/6.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'12/06/2023','الاثنين','Monday','8 yrs','130 cm','30 kg')"><img src="../images/childhood/6.jfif" alt=""></div>
+          </div>
+        </div>
+
+        <div class="fp-banner" style="background:linear-gradient(135deg,#89f7fe,#66a6ff)">
+          <div class="fp-banner-overlay"></div>
+          <i class="bi bi-patch-check-fill" style="font-size:52px;color:rgba(255,255,255,.88);position:relative;z-index:1"></i>
+          <div class="fp-badge-tag" data-ar="نجاح" data-en="Success">نجاح</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-title" data-ar="دورة البرمجة للأطفال" data-en="Kids Coding Course">دورة البرمجة للأطفال</div>
+          <div class="fp-desc" data-ar="أتم دورة Scratch بمعدل 98%." data-en="Completed Scratch course with 98% score.">أتم دورة Scratch بمعدل 98%.</div>
+          <div class="fp-meta">
+            <span><i class="bi bi-calendar3"></i> 20/09/2023 · <span data-ar="الأربعاء" data-en="Wednesday">الأربعاء</span></span>
+            <span><i class="bi bi-clock"></i> 02:00 PM</span>
+            <span><i class="bi bi-person-fill"></i> 8 <span data-ar="سنوات" data-en="Years">سنوات</span></span>
+            <span><i class="bi bi-book-fill"></i> <span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></span>
+          </div>
+          <div class="fp-photos">
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#4facfe,#00f2fe)" onclick="openLightbox(this.querySelector('img').src,'20/09/2023','الأربعاء','Wednesday','8 yrs','132 cm','31 kg')"><img src="../images/childhood/7.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)" onclick="openLightbox(this.querySelector('img').src,'20/09/2023','الأربعاء','Wednesday','8 yrs','132 cm','31 kg')"><img src="../images/childhood/5.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)" onclick="openLightbox(this.querySelector('img').src,'20/09/2023','الأربعاء','Wednesday','8 yrs','132 cm','31 kg')"><img src="../images/childhood/8.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)" onclick="openLightbox(this.querySelector('img').src,'20/09/2023','الأربعاء','Wednesday','8 yrs','132 cm','31 kg')"><img src="../images/childhood/8.jfif" alt=""></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 2 -->
+      <div class="feed-post" style="animation-delay:0.2s">
+        <div class="fp-banner" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">
+          <div class="fp-banner-overlay"></div>
+          <i class="bi bi-shield-fill-check" style="font-size:52px;color:rgba(255,255,255,.88);position:relative;z-index:1"></i>
+          <div class="fp-badge-tag" data-ar="بطولة" data-en="Sport">بطولة</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-title" data-ar="المركز الثالث بالشطرنج" data-en="3rd Place Chess Tournament">المركز الثالث بالشطرنج</div>
+          <div class="fp-desc" data-ar="بطولة الشطرنج بين 40 مشاركاً." data-en="Chess tournament among 40 participants.">بطولة الشطرنج بين 40 مشاركاً.</div>
+          <div class="fp-meta">
+            <span><i class="bi bi-calendar3"></i> 05/02/2024 · <span data-ar="الاثنين" data-en="Monday">الاثنين</span></span>
+            <span><i class="bi bi-clock"></i> 11:00 AM</span>
+            <span><i class="bi bi-person-fill"></i> 8 <span data-ar="سنوات" data-en="Years">سنوات</span></span>
+            <span><i class="bi bi-book-fill"></i> <span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></span>
+          </div>
+          <div class="fp-photos">
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#f6d365,#fda085)" onclick="openLightbox(this.querySelector('img').src,'05/02/2024','الاثنين','Monday','8 yrs','135 cm','32 kg')"><img src="../images/childhood/9.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)" onclick="openLightbox(this.querySelector('img').src,'05/02/2024','الاثنين','Monday','8 yrs','135 cm','32 kg')"><img src="../images/childhood/5.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)" onclick="openLightbox(this.querySelector('img').src,'05/02/2024','الاثنين','Monday','8 yrs','135 cm','32 kg')"><img src="../images/childhood/11.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)" onclick="openLightbox(this.querySelector('img').src,'05/02/2024','الاثنين','Monday','8 yrs','135 cm','32 kg')"><img src="../images/childhood/11.jfif" alt=""></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 3 -->
+      <div class="feed-post" style="animation-delay:0.3s">
+        <div class="fp-banner" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)">
+          <div class="fp-banner-overlay"></div>
+          <i class="bi bi-heart-fill" style="font-size:52px;color:rgba(255,255,255,.88);position:relative;z-index:1"></i>
+          <div class="fp-badge-tag" data-ar="تطوع" data-en="Volunteer">تطوع</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-title" data-ar="مبادرة تشجير المدرسة" data-en="School Greening Initiative">مبادرة تشجير المدرسة</div>
+          <div class="fp-desc" data-ar="شارك في زرع 20 شجرة ضمن المبادرة الوطنية." data-en="Participated in planting 20 trees.">شارك في زرع 20 شجرة ضمن المبادرة الوطنية.</div>
+          <div class="fp-meta">
+            <span><i class="bi bi-calendar3"></i> 10/11/2023 · <span data-ar="الجمعة" data-en="Friday">الجمعة</span></span>
+            <span><i class="bi bi-clock"></i> 09:00 AM</span>
+            <span><i class="bi bi-person-fill"></i> 8 <span data-ar="سنوات" data-en="Years">سنوات</span></span>
+            <span><i class="bi bi-book-fill"></i> <span data-ar="الصف الثالث" data-en="Grade 3">الصف الثالث</span></span>
+          </div>
+          <div class="fp-photos">
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)" onclick="openLightbox(this.querySelector('img').src,'10/11/2023','الجمعة','Friday','8 yrs','133 cm','31 kg')"><img src="../images/childhood/12.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#E0EAFC,#CFDEF3)" onclick="openLightbox(this.querySelector('img').src,'10/11/2023','الجمعة','Friday','8 yrs','133 cm','31 kg')"><img src="../images/childhood/5.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#FDE8FF,#F3BAFF)" onclick="openLightbox(this.querySelector('img').src,'10/11/2023','الجمعة','Friday','8 yrs','133 cm','31 kg')"><img src="../images/childhood/13.jfif" alt=""></div>
+            <div class="fp-thumb" style="background:linear-gradient(135deg,#FDE8FF,#F3BAFF)" onclick="openLightbox(this.querySelector('img').src,'10/11/2023','الجمعة','Friday','8 yrs','133 cm','31 kg')"><img src="../images/childhood/13.jfif" alt=""></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end feedCol -->
+  </div><!-- end right column -->
+
+</div><!-- end main-wrapper -->
+
+<!-- ===== MOMENT MODALS ===== -->
+
+<!-- Modal: أول كلمة -->
+<div class="moment-modal-overlay" id="modal-word" onclick="closeMomentModalOutside(event,'modal-word')">
+  <div class="moment-modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-big" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9)">💬</div>
+        <div>
+          <div class="modal-title" data-ar="أول كلمة" data-en="First Word">أول كلمة</div>
+          <div class="modal-subtitle">Mon · 15/02/2016</div>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeMomentModal('modal-word')"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="media-section">
+        <div class="media-section-title" style="color:#e53935"><i class="bi bi-play-circle-fill" style="color:#e53935"></i><span data-ar="الفيديو" data-en="Video">الفيديو</span></div>
+        <div class="media-video-wrap">
+          <video id="video-word" controls playsinline style="display:none"><source src="../images/childhood/1.mp4" type="video/mp4"></video>
+          <div class="video-placeholder" id="video-word-placeholder"><i class="bi bi-camera-video-fill"></i><p data-ar="لم يتم رفع الفيديو بعد" data-en="Video not uploaded yet">لم يتم رفع الفيديو بعد</p></div>
+        </div>
+      </div>
+      <div class="media-section">
+        <div class="media-section-title" style="color:#2e7d32"><i class="bi bi-mic-fill" style="color:#2e7d32"></i><span data-ar="التسجيل الصوتي" data-en="Audio Recording">التسجيل الصوتي</span></div>
+        <div class="audio-player-custom">
+          <button class="audio-play-btn" onclick="toggleAudio('audio-word','waves-word',this)"><i class="bi bi-play-fill" id="play-icon-word"></i></button>
+          <div class="audio-info">
+            <p data-ar="أول كلمة قالها" data-en="His first word">أول كلمة قالها</p>
+            <div class="audio-waves paused" id="waves-word"><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <audio id="audio-word"><source src="../images/childhood/1.mp3" type="audio/mpeg"></audio>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: أول خطوة -->
+<div class="moment-modal-overlay" id="modal-walk" onclick="closeMomentModalOutside(event,'modal-walk')">
+  <div class="moment-modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-big" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb)">👣</div>
+        <div>
+          <div class="modal-title" data-ar="أول خطوة" data-en="First Step">أول خطوة</div>
+          <div class="modal-subtitle">Wed · 20/04/2016</div>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeMomentModal('modal-walk')"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="media-section">
+        <div class="media-section-title" style="color:#1565c0"><i class="bi bi-images" style="color:#1565c0"></i><span data-ar="الصور" data-en="Photos">الصور</span></div>
+        <div class="modal-photo-grid">
+          <div class="modal-photo-item"><img src="../images/childhood/11.jfif" alt="" onerror="this.parentElement.innerHTML='<span class=\'photo-placeholder-icon\'>📷</span>'"></div>
+          <div class="modal-photo-item"><img src="../images/childhood/13.jfif" alt="" onerror="this.parentElement.innerHTML='<span class=\'photo-placeholder-icon\'>📷</span>'"></div>
+        </div>
+      </div>
+      <div class="media-section">
+        <div class="media-section-title" style="color:#e53935"><i class="bi bi-play-circle-fill" style="color:#e53935"></i><span data-ar="الفيديو" data-en="Video">الفيديو</span></div>
+        <div class="media-video-wrap">
+          <video id="video-walk" controls playsinline style="display:none"><source src="../images/childhood/1.mp4" type="video/mp4"></video>
+          <div class="video-placeholder" id="video-walk-placeholder"><i class="bi bi-camera-video-fill"></i><p data-ar="لم يتم رفع الفيديو بعد" data-en="Video not uploaded yet">لم يتم رفع الفيديو بعد</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: أول رسمة -->
+<div class="moment-modal-overlay" id="modal-drawing" onclick="closeMomentModalOutside(event,'modal-drawing')">
+  <div class="moment-modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-big" style="background:linear-gradient(135deg,#fff8e1,#ffecb3)">🎨</div>
+        <div>
+          <div class="modal-title" data-ar="أول رسمة" data-en="First Drawing">أول رسمة</div>
+          <div class="modal-subtitle">Mon · 10/09/2018</div>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeMomentModal('modal-drawing')"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="media-section">
+        <div class="media-section-title" style="color:#e53935"><i class="bi bi-play-circle-fill" style="color:#e53935"></i><span data-ar="الفيديو" data-en="Video">الفيديو</span></div>
+        <div class="media-video-wrap">
+          <video id="video-drawing" controls playsinline style="display:none"><source src="../images/childhood/1.mp4" type="video/mp4"></video>
+          <div class="video-placeholder" id="video-drawing-placeholder"><i class="bi bi-camera-video-fill"></i><p data-ar="لم يتم رفع الفيديو بعد" data-en="Video not uploaded yet">لم يتم رفع الفيديو بعد</p></div>
+        </div>
+      </div>
+      <div class="media-section">
+        <div class="media-section-title" style="color:#e65100"><i class="bi bi-brush-fill" style="color:#e65100"></i><span data-ar="الرسمة" data-en="The Drawing">الرسمة</span></div>
+        <div class="modal-drawing-item" id="drawing-container">
+          <img src="../images/childhood/5.5.jfif" alt="" id="drawing-img" onerror="showDrawingPlaceholder()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link active" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link active" href="profile_adult.html"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_adulthood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_adulthood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_adulthood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="mobile-nav-link" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightboxOutside(event)">
+  <div class="lightbox-card">
+    <div class="lightbox-card-header">
+      <div class="lightbox-card-title"><i class="bi bi-image-fill"></i><span data-ar="الصورة" data-en="Photo">الصورة</span></div>
+      <button class="lightbox-close" onclick="closeLightbox()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="lightbox-img-wrap">
+      <img id="lightboxImg" src="" alt="">
+    </div>
+    <div class="lightbox-info" id="lightboxInfo"></div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<!-- lang toggle handled by app.js -->
+<script>
+// ===== LIGHTBOX =====
+// accepts: src, dateAr, dayAr, dayEn, age, height, weight  (dayEn optional)
+function openLightbox(src, date, dayAr, dayEn, age, height, weight) {
+  // Support old 6-arg calls: openLightbox(src, date, day, age, height, weight)
+  if (weight === undefined) {
+    weight = height;
+    height = age;
+    age    = dayEn;
+    dayEn  = dayAr;
+    dayAr  = dayEn;
+  }
+  const isEn  = document.documentElement.getAttribute('data-lang') === 'en';
+  const day   = isEn ? dayEn : dayAr;
+  const overlay = document.getElementById('lightboxOverlay');
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxInfo').innerHTML = `
+    <div class="lb-info-chip">
+      <i class="bi bi-calendar3"></i>
+      <div><span class="chip-label" data-ar="التاريخ" data-en="Date">التاريخ</span><span class="chip-val">${date}</span></div>
+    </div>
+    <div class="lb-info-chip">
+      <i class="bi bi-calendar-week"></i>
+      <div><span class="chip-label" data-ar="اليوم" data-en="Day">اليوم</span><span class="chip-val">${day}</span></div>
+    </div>
+    <div class="lb-info-chip">
+      <i class="bi bi-person-fill"></i>
+      <div><span class="chip-label" data-ar="العمر" data-en="Age">العمر</span><span class="chip-val">${age}</span></div>
+    </div>
+    <div class="lb-info-chip">
+      <i class="bi bi-rulers"></i>
+      <div><span class="chip-label" data-ar="الطول" data-en="Height">الطول</span><span class="chip-val">${height}</span></div>
+    </div>
+    <div class="lb-info-chip full">
+      <i class="bi bi-activity"></i>
+      <div><span class="chip-label" data-ar="الوزن" data-en="Weight">الوزن</span><span class="chip-val">${weight}</span></div>
+    </div>
+  `;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightboxOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeLightboxOutside(e) {
+  if (e.target === e.currentTarget) closeLightbox();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+<script>
+// ===== VIDEO AUTO-LOAD =====
+document.addEventListener('DOMContentLoaded', function() {
+  ['word','walk','drawing'].forEach(function(type) {
+    var video = document.getElementById('video-' + type);
+    var ph    = document.getElementById('video-' + type + '-placeholder');
+    if (!video || !ph) return;
+    video.style.display = 'block';
+    ph.style.display    = 'none';
+    video.addEventListener('error', function() {
+      video.style.display = 'none';
+      ph.style.display    = 'flex';
+    });
+  });
+});
+
+// ===== MOMENT MODALS =====
+function openMomentModal(type) {
+  const el = document.getElementById('modal-' + type);
+  if (el) { el.classList.add('active'); document.body.style.overflow = 'hidden'; }
+}
+
+function closeMomentModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('active');
+  document.body.style.overflow = '';
+  el.querySelectorAll('video').forEach(v => v.pause());
+  el.querySelectorAll('audio').forEach(a => {
+    a.pause();
+    const wavesId = a.id.replace('audio-','waves-');
+    const waves   = document.getElementById(wavesId);
+    if (waves) waves.classList.add('paused');
+    const iconId  = a.id.replace('audio-','play-icon-');
+    const icon    = document.getElementById(iconId);
+    if (icon) icon.className = 'bi bi-play-fill';
+  });
+}
+
+function closeMomentModalOutside(event, id) {
+  if (event.target === event.currentTarget) closeMomentModal(id);
+}
+
+// ===== AUDIO TOGGLE =====
+function toggleAudio(audioId, wavesId, btn) {
+  const audio = document.getElementById(audioId);
+  const waves = document.getElementById(wavesId);
+  const icon  = btn.querySelector('i');
+  if (!audio) return;
+  if (audio.paused) {
+    audio.play().then(() => {
+      waves.classList.remove('paused');
+      icon.className = 'bi bi-pause-fill';
+    }).catch(() => {
+      waves.classList.remove('paused');
+      icon.className = 'bi bi-pause-fill';
+      setTimeout(() => { waves.classList.add('paused'); icon.className = 'bi bi-play-fill'; }, 3000);
+    });
+  } else {
+    audio.pause();
+    waves.classList.add('paused');
+    icon.className = 'bi bi-play-fill';
+  }
+  audio.onended = function() { waves.classList.add('paused'); icon.className = 'bi bi-play-fill'; };
+}
+
+// ===== DRAWING PLACEHOLDER =====
+function showDrawingPlaceholder() {
+  const c = document.getElementById('drawing-container');
+  if (c) c.innerHTML = '<div class="drawing-placeholder"><i class="bi bi-brush-fill"></i><p>لم يتم رفع الرسمة بعد</p></div>';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    ['modal-word','modal-walk','modal-drawing'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.classList.contains('active')) closeMomentModal(id);
+    });
+  }
+});
+</script>
+</body>
+</html>

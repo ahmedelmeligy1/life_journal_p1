@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — الشهادات — الشباب</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .certs-body {
+    padding: 24px
+  }
+
+  .cert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--ease);
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp .4s ease both;
+    height: 100%
+  }
+
+  .cert-card:hover {
+    box-shadow: var(--shadow-h);
+    transform: translateY(-5px)
+  }
+
+  .cert-banner {
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #fff;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden
+  }
+
+  .cert-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.12)
+  }
+
+  .cert-banner i {
+    font-size: 42px;
+    opacity: .9;
+    position: relative;
+    z-index: 1
+  }
+
+  .cert-banner-title {
+    font-size: 14px;
+    font-weight: 700;
+    position: relative;
+    z-index: 1
+  }
+
+  .cert-body {
+    padding: 16px 18px;
+    flex: 1
+  }
+
+  .cbadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px
+  }
+
+  .cert-body h4 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 7px
+  }
+
+  .cert-body p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 12px
+  }
+
+  .cert-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px
+  }
+
+  .cii {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 8px 10px
+  }
+
+  .cii label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    display: block;
+    margin-bottom: 3px
+  }
+
+  .cii span {
+    font-size: 12.5px;
+    font-weight: 700
+  }
+
+  .cert-school {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px
+  }
+
+  .cert-school i {
+    color: var(--sc)
+  }
+
+  /* Thumbnails */
+  .cert-thumbs {
+    display: flex;
+    gap: 7px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border)
+  }
+
+  .ct {
+    flex: 1;
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    position: relative;
+    cursor: pointer;
+    transition: transform .22s, box-shadow .22s
+  }
+
+  .ct:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 20px rgba(0,0,0,.22)
+  }
+
+  .ct img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover
+  }
+
+  /* Day chip */
+  .day-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: color-mix(in srgb, var(--sc) 12%, transparent);
+    color: var(--sc);
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    margin-right: 5px
+  }
+
+  .today-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,.08);
+    color: inherit;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 6px
+  }
+
+  /* ===== Lightbox ===== */
+  .lb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: lbFadeIn .25s ease
+  }
+
+  .lb-overlay.open {
+    display: flex
+  }
+
+  @keyframes lbFadeIn {
+    from { opacity: 0 }
+    to   { opacity: 1 }
+  }
+
+  .lb-box {
+    background: var(--surface, #fff);
+    border-radius: 24px;
+    overflow: hidden;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    animation: lbSlideUp .3s cubic-bezier(.34,1.56,.64,1)
+  }
+
+  @keyframes lbSlideUp {
+    from { transform: translateY(40px) scale(.92); opacity: 0 }
+    to   { transform: translateY(0) scale(1); opacity: 1 }
+  }
+
+  .lb-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #111
+  }
+
+  .lb-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block
+  }
+
+  .lb-close {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.55);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s
+  }
+
+  .lb-close:hover { background: rgba(0,0,0,.85) }
+
+  .lb-info {
+    padding: 18px 20px 20px;
+    border-top: 1px solid var(--border, #eee)
+  }
+
+  .lb-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 14px
+  }
+
+  .lb-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px
+  }
+
+  .lb-stat {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--bg, #f8f8f8);
+    border: 1px solid var(--border, #eee);
+    border-radius: 12px;
+    padding: 10px 13px
+  }
+
+  .lb-stat.full { grid-column: 1 / -1 }
+
+  .lb-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+  }
+
+  .lb-stat-icon i {
+    font-size: 15px;
+    color: #fff
+  }
+
+  .lb-stat-text small {
+    display: block;
+    font-size: 10px;
+    color: var(--muted, #888);
+    font-weight: 600;
+    margin-bottom: 1px
+  }
+
+  .lb-stat-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800
+  }
+
+  @media(max-width:600px) {
+    .certs-body { padding: 16px }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+
+<div class="page-tabs">
+  <a class="page-tab" href="profile_adult.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab" href="height_adulthood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab active" href="certs_adulthood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab" href="edu_adulthood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#fffbf0;--ha:#d4ac0d">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="الشهادات" data-en="Certificates">الشهادات</span> <span class="sec-he"></span></h2>
+  <p data-ar="كل شهادة قصة نجاح وتميز" data-en="Every certificate tells a story of success">كل شهادة قصة نجاح وتميز</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="certs-body">
+  <div class="row g-4">
+
+    <!-- Card 1: KAUST Graduation -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.00s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#1a1a2e,#0f3460)">
+          <img src="../images/Adulthood/1.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-mortarboard-fill"></i>
+          <div class="cert-banner-title" data-ar="التخرج من KAUST بمرتبة الشرف" data-en="KAUST Graduation with Honors">التخرج من KAUST بمرتبة الشرف</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#4776E61A;color:#4776E6"><i class="bi bi-mortarboard-fill"></i> <span data-ar="تخرج" data-en="Graduation">تخرج</span></div>
+          <h4 data-ar="التخرج من KAUST بمرتبة الشرف" data-en="KAUST Graduation with Honors">التخرج من KAUST بمرتبة الشرف</h4>
+          <p data-ar="تخرج بمرتبة الشرف في هندسة الحاسب معدل 4.9." data-en="Graduated with honors in Computer Engineering GPA 4.9.">تخرج بمرتبة الشرف في هندسة الحاسب معدل 4.9.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span><span class="day-chip" data-date="2037-06-20"></span> 20/06/2037</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span>11:00 AM</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span>22 <span data-ar="سنة" data-en="Years">سنة</span></span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="السنة الرابعة" data-en="Year 4">السنة الرابعة</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="جامعة الملك عبدالله KAUST" data-en="King Abdullah University KAUST">جامعة الملك عبدالله KAUST</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#1a1a2e,#0f3460)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/1.jfif"
+            data-title="التخرج من KAUST بمرتبة الشرف"
+            data-date="20/06/2037" data-date-iso="2037-06-20"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/1.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#E0EAFC,#CFDEF3)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/5.jpg"
+            data-title="التخرج من KAUST بمرتبة الشرف"
+            data-date="20/06/2037" data-date-iso="2037-06-20"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/1.jfif"
+            data-title="التخرج من KAUST بمرتبة الشرف"
+            data-date="20/06/2037" data-date-iso="2037-06-20"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/1.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: iForce Engineer -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.08s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#11998e,#38ef7d)">
+          <img src="../images/Adulthood/2.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-briefcase-fill"></i>
+          <div class="cert-banner-title" data-ar="مهندس في ايفورك الامارات" data-en="Engineer at iForce UAE">مهندس في ايفورك الامارات</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#0596691A;color:#059669"><i class="bi bi-briefcase-fill"></i> <span data-ar="عمل" data-en="Career">عمل</span></div>
+          <h4 data-ar="مهندس في ايفورك الامارات" data-en="Engineer at iForce UAE">مهندس في ايفورك الامارات</h4>
+          <p data-ar="انضم لفريق الابتكار الرقمي في ايفورك." data-en="Joined the digital innovation team at iForce.">انضم لفريق الابتكار الرقمي في ايفورك.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span><span class="day-chip" data-date="2037-09-01"></span> 01/09/2037</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span>09:00 AM</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span>22 <span data-ar="سنة" data-en="Years">سنة</span></span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="سنة أولى" data-en="Year 1 Career">سنة أولى</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="ايفورك الامارات" data-en="iForce UAE">ايفورك الامارات</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#11998e55,#38ef7d55)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/2.jfif"
+            data-title="مهندس في ايفورك الامارات"
+            data-date="01/09/2037" data-date-iso="2037-09-01"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/2.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/5.jpg"
+            data-title="مهندس في ايفورك الامارات"
+            data-date="01/09/2037" data-date-iso="2037-09-01"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#C9FFE5,#B5FFFC)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/3.jfif"
+            data-title="مهندس في ايفورك الامارات"
+            data-date="01/09/2037" data-date-iso="2037-09-01"
+            data-age="22 سنة" data-height="173 cm" data-weight="69.0 kg">
+            <img src="../images/Adulthood/3.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: CES 2038 -->
+    <div class="col-12 col-sm-6 col-lg-4" style="animation-delay:.16s">
+      <div class="cert-card">
+        <div class="cert-banner" style="background:linear-gradient(135deg,#f953c6,#b91d73)">
+          <img src="../images/Adulthood/4.jfif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25;z-index:0" onerror="this.remove()">
+          <i class="bi bi-globe2"></i>
+          <div class="cert-banner-title" data-ar="جائزة الابتكار الدولية CES 2038" data-en="International Innovation Award CES 2038">جائزة الابتكار الدولية CES 2038</div>
+        </div>
+        <div class="cert-body">
+          <div class="cbadge" style="background:#DB27771A;color:#DB2777"><i class="bi bi-globe2"></i> <span data-ar="دولي" data-en="International">دولي</span></div>
+          <h4 data-ar="جائزة الابتكار الدولية CES 2038" data-en="International Innovation Award CES 2038">جائزة الابتكار الدولية CES 2038</h4>
+          <p data-ar="أفضل مشروع تقني في مؤتمر CES 2038." data-en="Best tech project award at CES 2038 conference.">أفضل مشروع تقني في مؤتمر CES 2038.</p>
+          <div class="cert-info-grid">
+            <div class="cii"><label data-ar="التاريخ" data-en="Date">التاريخ</label><span><span class="day-chip" data-date="2038-01-10"></span> 10/01/2038</span></div>
+            <div class="cii"><label data-ar="الوقت" data-en="Time">الوقت</label><span>06:00 PM</span></div>
+            <div class="cii"><label data-ar="العمر" data-en="Age">العمر</label><span>23 <span data-ar="سنة" data-en="Years">سنة</span></span></div>
+            <div class="cii"><label data-ar="السنة الدراسية" data-en="Grade">السنة الدراسية</label><span data-ar="سنة ثانية" data-en="Year 2 Career">سنة ثانية</span></div>
+          </div>
+          <div class="cert-school"><i class="bi bi-building"></i><span data-ar="مؤتمر CES — لاس فيغاس" data-en="CES Conference — Las Vegas">مؤتمر CES — لاس فيغاس</span></div>
+        </div>
+        <div class="cert-thumbs">
+          <div class="ct" style="background:linear-gradient(135deg,#f953c655,#b91d7355)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/5.jfif"
+            data-title="جائزة الابتكار الدولية CES 2038"
+            data-date="10/01/2038" data-date-iso="2038-01-10"
+            data-age="23 سنة" data-height="173 cm" data-weight="69.5 kg">
+            <img src="../images/Adulthood/5.jfif" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/5.jpg"
+            data-title="جائزة الابتكار الدولية CES 2038"
+            data-date="10/01/2038" data-date-iso="2038-01-10"
+            data-age="23 سنة" data-height="173 cm" data-weight="69.5 kg">
+            <img src="../images/Adulthood/5.jpg" alt=""></div>
+          <div class="ct" style="background:linear-gradient(135deg,#FFDEE9,#B5FFFC)"
+            onclick="openLightbox(this)"
+            data-src="../images/Adulthood/4.jfif"
+            data-title="جائزة الابتكار الدولية CES 2038"
+            data-date="10/01/2038" data-date-iso="2038-01-10"
+            data-age="23 سنة" data-height="173 cm" data-weight="69.5 kg">
+            <img src="../images/Adulthood/4.jfif" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== Lightbox Modal ===== -->
+<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox(event)">
+  <div class="lb-box" id="lbBox">
+    <div class="lb-img-wrap">
+      <img id="lbImg" src="" alt="">
+      <button class="lb-close" onclick="closeLightboxDirect()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="lb-info">
+      <div class="lb-title" id="lbTitle"></div>
+      <div class="lb-stats">
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#3B82F6"><i class="bi bi-calendar3"></i></div>
+          <div class="lb-stat-text"><small data-ar="التاريخ" data-en="Date">التاريخ</small><strong id="lbDate"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#7C3AED"><i class="bi bi-sun-fill"></i></div>
+          <div class="lb-stat-text"><small data-ar="اليوم" data-en="Day">اليوم</small><strong id="lbDay"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#F59E0B"><i class="bi bi-person-fill"></i></div>
+          <div class="lb-stat-text"><small data-ar="العمر" data-en="Age">العمر</small><strong id="lbAge"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#16A34A"><i class="bi bi-rulers"></i></div>
+          <div class="lb-stat-text"><small data-ar="الطول" data-en="Height">الطول</small><strong id="lbHeight"></strong></div>
+        </div>
+        <div class="lb-stat full">
+          <div class="lb-stat-icon" style="background:#D97706"><i class="bi bi-activity"></i></div>
+          <div class="lb-stat-text"><small data-ar="الوزن" data-en="Weight">الوزن</small><strong id="lbWeight"></strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile_adult.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_adulthood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link active" href="certs_adulthood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_adulthood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+      <a class="page-tab" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  const td = document.getElementById('todayDate');
+  if(td) td.textContent = new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+<script>
+// ===== Day name chips =====
+const dayNamesAr = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const dayNamesEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getDayName(isoDate, lang) {
+  const d = new Date(isoDate + 'T12:00:00');
+  return lang === 'en' ? dayNamesEn[d.getDay()] : dayNamesAr[d.getDay()];
+}
+
+function renderDayChips() {
+  const isEn = document.documentElement.getAttribute('data-lang') === 'en';
+  document.querySelectorAll('.day-chip[data-date]').forEach(chip => {
+    chip.textContent = getDayName(chip.dataset.date, isEn ? 'en' : 'ar');
+  });
+}
+
+renderDayChips();
+
+// Hook into lang toggle
+const _origToggle = window.toggleLang;
+window.toggleLang = function() {
+  if (_origToggle) _origToggle();
+  setTimeout(renderDayChips, 60);
+};
+
+// ===== Lightbox =====
+function openLightbox(ct) {
+  const isoDate = ct.dataset.dateIso;
+  const isEn = document.documentElement.getAttribute('data-lang') === 'en';
+  const imgSrc = ct.dataset.src || ct.querySelector('img')?.src || '';
+
+  document.getElementById('lbImg').src = imgSrc;
+  document.getElementById('lbTitle').textContent = ct.dataset.title;
+  document.getElementById('lbDate').textContent = ct.dataset.date;
+  document.getElementById('lbDay').textContent = getDayName(isoDate, isEn ? 'en' : 'ar');
+  document.getElementById('lbAge').textContent = ct.dataset.age;
+  document.getElementById('lbHeight').textContent = ct.dataset.height;
+  document.getElementById('lbWeight').textContent = ct.dataset.weight;
+  document.getElementById('lbOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox(e) {
+  if (e.target === document.getElementById('lbOverlay')) closeLightboxDirect();
+}
+
+function closeLightboxDirect() {
+  document.getElementById('lbOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightboxDirect(); });
+</script>
+</body>
+</html>

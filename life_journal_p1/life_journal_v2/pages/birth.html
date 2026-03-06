@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — الولادة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .birth-body {
+    padding: 24px
+  }
+
+  .bcard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    height: 100%
+  }
+
+  .bcard-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px
+  }
+
+  .bcard-title i {
+    color: var(--sc);
+    font-size: 14px
+  }
+
+  .bdi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px
+  }
+
+  .bdi {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 12px
+  }
+
+  .bdi-ic {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--sc) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+  }
+
+  .bdi-ic i {
+    font-size: 15px;
+    color: var(--sc)
+  }
+
+  .bdi b {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 3px
+  }
+
+  .bdi span {
+    font-size: 13.5px;
+    font-weight: 700
+  }
+
+  /* ===== طبعة القدم — صورة ===== */
+  .foot-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0
+  }
+
+  .foot-img-wrap {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    min-height: 180px;
+    background: linear-gradient(135deg, #fff0e8, #ffd6b8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .foot-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+  }
+
+  .foot-img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--sc);
+    opacity: 0.5;
+    padding: 30px;
+  }
+
+  .foot-img-placeholder i {
+    font-size: 48px;
+  }
+
+  .foot-img-placeholder span {
+    font-size: 12px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 600;
+  }
+
+  .foot-lbl {
+    text-align: center
+  }
+
+  .foot-lbl strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 800
+  }
+
+  .foot-lbl span {
+    font-size: 12px;
+    color: var(--muted)
+  }
+
+  /* ===== أول فيديو — نفس مقاس الصور ===== */
+  .first-video-wrap {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #111;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .first-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+  }
+
+  .video-ph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #aaa;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .video-ph i { font-size: 48px; color: #555; }
+  .video-ph p { font-size: 13px; margin: 0; color: #777; }
+
+  /* ===== BIRTH LIGHTBOX ===== */
+  .blb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,20,0.6);
+    z-index: 99999;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: blbFade 0.2s ease;
+  }
+  .blb-overlay.active { display: flex; }
+  @keyframes blbFade { from{opacity:0} to{opacity:1} }
+
+  .blb-card {
+    background: #fff;
+    border-radius: 24px;
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+    animation: blbUp 0.3s cubic-bezier(0.34,1.4,0.64,1);
+    direction: rtl;
+  }
+  @keyframes blbUp {
+    from { transform: translateY(30px) scale(0.95); opacity:0; }
+    to   { transform: translateY(0) scale(1); opacity:1; }
+  }
+
+  .blb-img-wrap { width:100%; background:#f0f0f0; }
+  .blb-img-wrap img { width:100%; max-height:50vh; object-fit:cover; display:block; }
+
+  .blb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .blb-title {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .blb-title i { color: #e74c6f; }
+
+  .blb-close {
+    width: 34px; height: 34px;
+    border-radius: 50%; border: none;
+    background: #f5f5f5; color: #666;
+    font-size: 17px; display: flex;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, color 0.2s;
+  }
+  .blb-close:hover { background:#ffe0e0; color:#e53935; transform:rotate(90deg); }
+
+  .blb-chips {
+    padding: 14px 18px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .blb-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f7f8ff;
+    border: 1px solid #eceeff;
+    border-radius: 30px;
+    padding: 5px 13px;
+    font-size: 12px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 600;
+    color: #444;
+    white-space: nowrap;
+  }
+  .blb-chip i { font-size: 13px; color: #e74c6f; }
+  .blb-chip span { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px; color: #1a1a2e; }
+
+  /* صور قابلة للضغط */
+  .mp { cursor: pointer; transition: filter 0.2s; }
+  .mp:hover { filter: brightness(1.1); }
+
+  /* الصور */
+  .photo-mosaic {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 8px;
+    grid-template-rows: auto auto
+  }
+
+  .pm-big {
+    grid-row: span 2
+  }
+
+  .mp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px;
+    color: rgba(255, 255, 255, .85);
+    min-height: 100px;
+    overflow: hidden;
+    position: relative
+  }
+
+  .mp i {
+    font-size: 22px;
+    opacity: .85;
+    position: relative;
+    z-index: 1
+  }
+
+  .mp small {
+    font-size: 10px;
+    opacity: .75;
+    position: relative;
+    z-index: 1
+  }
+
+  .mp img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px
+  }
+
+  .bp1 { background: linear-gradient(135deg, #FFDEE9, #B5FFFC); color: #446; min-height: 190px }
+  .bp2 { background: linear-gradient(135deg, #E0C3FC, #8EC5FC); color: #334 }
+  .bp3 { background: linear-gradient(135deg, #f9ca8a, #f6d365); color: #554 }
+  .bp4 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #446 }
+  .bp5 { background: linear-gradient(135deg, #fccb90, #d57eeb); color: #553 }
+  .bp6 { background: linear-gradient(135deg, #84fab0, #8fd3f4); color: #446 }
+
+  .today-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0, 0, 0, .08);
+    color: inherit;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 6px
+  }
+
+  @media(max-width:576px) {
+    .bdi-grid { grid-template-columns: 1fr }
+    .photo-mosaic { grid-template-columns: 1fr 1fr }
+    .pm-big { grid-row: span 1 }
+    .birth-body { padding: 16px }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+
+<div class="page-tabs">
+  <a class="page-tab" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar=" الرئيسية" data-en=" Home"> الرئيسية</span></a>
+  <a class="page-tab active" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar=" الولادة" data-en=" Birth"> الولادة</span></a>
+  <a class="page-tab" href="height_childhood.html" id="tab-height"><i class="bi bi-rulers"></i><span data-ar=" الطول" data-en=" Height"> الطول</span></a>
+  <a class="page-tab" href="certs_childhood.html" id="tab-certs"><i class="bi bi-award-fill"></i><span data-ar=" الشهادات" data-en=" Certificates"> الشهادات</span></a>
+  <a class="page-tab" href="edu_childhood.html" id="tab-edu"><i class="bi bi-mortarboard-fill"></i><span data-ar=" التعليم" data-en=" Education"> التعليم</span></a>
+  <a class="page-tab" href="timeline.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#fff0f3;--ha:#e74c6f">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="الولادة" data-en="Birth">الولادة</span> <span class="sec-he"></span></h2>
+  <p data-ar="15 مارس 2015 · 03:42 فجراً" data-en="15 March 2015 · 03:42 AM">15 مارس 2015 · 03:42 فجراً</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="birth-body">
+  <div class="row g-4">
+
+    <!-- طبعة القدم -->
+    <div class="col-md-4">
+      <div class="bcard">
+        <div class="bcard-title"><i class="bi bi-patch-check-fill"></i><span data-ar="طبعة القدم" data-en="Footprint">طبعة القدم</span></div>
+        <div class="foot-wrap">
+          <div class="foot-img-wrap">
+            <img src="../images/childhood/Foot.jfif" alt="طبعة القدم"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div class="foot-img-placeholder" style="display:none">
+              <i class="bi bi-image-fill"></i>
+              <span data-ar="صورة طبعة القدم" data-en="Footprint photo">صورة طبعة القدم</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- تفاصيل الولادة -->
+    <div class="col-md-8">
+      <div class="bcard">
+        <div class="bcard-title"><i class="bi bi-heart-pulse-fill"></i><span data-ar="تفاصيل الولادة" data-en="Birth Details">تفاصيل الولادة</span></div>
+        <div class="bdi-grid">
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-person-badge-fill"></i></div><div><b data-ar="الاسم" data-en="Name">الاسم</b><span data-ar="محمد عبدالله الأحمدي" data-en="Mohammed Abdullah Al-Ahmadi">محمد عبدالله الأحمدي</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-calendar-heart-fill"></i></div><div><b data-ar="التاريخ" data-en="Date">التاريخ</b><span data-ar="15 مارس 2015" data-en="15 March 2015">15 مارس 2015</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-clock-fill"></i></div><div><b data-ar="الوقت" data-en="Time">الوقت</b><span data-ar="03:42 فجراً" data-en="03:42 AM">03:42 فجراً</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-geo-alt-fill"></i></div><div><b data-ar="المكان" data-en="Place">المكان</b><span data-ar="مستشفى الملك فهد — الرياض" data-en="King Fahd Hospital — Riyadh">مستشفى الملك فهد — الرياض</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-activity"></i></div><div><b data-ar="الطول" data-en="Height">الطول</b><span data-ar="51 سم" data-en="51 cm">51 سم</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-clipboard2-pulse-fill"></i></div><div><b data-ar="الوزن" data-en="Weight">الوزن</b><span data-ar="3.8 كغ" data-en="3.8 kg">3.8 كغ</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-droplet-fill"></i></div><div><b data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</b><span>O+</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-hospital-fill"></i></div><div><b data-ar="الطبيبة" data-en="Doctor">الطبيبة</b><span data-ar="د. سارة العتيبي" data-en="Dr. Sara Al-Otaibi">د. سارة العتيبي</span></div></div>
+          <div class="bdi"><div class="bdi-ic"><i class="bi bi-person-fill"></i></div><div><b data-ar="الأب" data-en="Father">الأب</b><span data-ar="عبدالله محمد الأحمدي" data-en="Abdullah Mohammed Al-Ahmadi">عبدالله محمد الأحمدي</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- أول فيديو -->
+    <div class="col-md-5">
+      <div class="bcard">
+        <div class="bcard-title"><i class="bi bi-play-circle-fill"></i><span data-ar="أول فيديو" data-en="First Video">أول فيديو</span></div>
+        <div class="first-video-wrap">
+          <video id="birth-video" controls playsinline>
+            <source src="../images/childhood/1.mp4" type="video/mp4">
+          </video>
+          <div class="video-ph" id="birth-video-ph" style="display:none">
+            <i class="bi bi-camera-video-fill"></i>
+            <p data-ar="لم يتم رفع الفيديو بعد" data-en="Video not uploaded yet">لم يتم رفع الفيديو بعد</p>
+          </div>
+        </div>
+        <div style="margin-top:10px; text-align:center; font-size:12px; color:var(--muted); font-family:'Tajawal',sans-serif; font-weight:600;">
+          <i class="bi bi-calendar3" style="color:var(--sc)"></i>
+          <span data-ar="15 / 3 / 2015" data-en="15 / 3 / 2015">15 / 3 / 2015</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ذكريات أولى -->
+    <div class="col-md-7">
+      <div class="bcard">
+        <div class="bcard-title"><i class="bi bi-images"></i><span data-ar="ذكريات أولى" data-en="Early Memories">ذكريات أولى</span></div>
+        <div class="photo-mosaic">
+          <div class="pm-big" onclick="openBirthLB(this.querySelector('img').src,'يوم 1','الأحد · 15/03/2015','0 أيام','51 سم','3.8 كغ')">
+            <div class="mp bp2" style="height:100%">
+              <img src="../images/childhood/2.jfif" id="img-day1" alt="">
+            </div>
+          </div>
+          <div class="mp bp3" onclick="openBirthLB(this.querySelector('img').src,'يوم 2','الاثنين · 16/03/2015','يوم 1','51 سم','3.8 كغ')">
+            <img src="../images/childhood/3.jfif" id="img-day2" alt="">
+          </div>
+          <div class="mp bp4" onclick="openBirthLB(this.querySelector('img').src,'يوم 3','الثلاثاء · 17/03/2015','يومان','51 سم','3.9 كغ')">
+            <img src="../images/childhood/4.jfif" id="img-day3" alt="">
+          </div>
+          <div class="mp bp5" onclick="openBirthLB(this.querySelector('img').src,'أسبوع 1','الأحد · 22/03/2015','7 أيام','52 سم','4.0 كغ')">
+            <img src="../images/childhood/4.jfif" id="img-day3" alt="">
+          </div>
+          <div class="mp bp6" onclick="openBirthLB(this.querySelector('img').src,'شهر 1','الثلاثاء · 15/04/2015','شهر','54 سم','4.5 كغ')">
+            <img src="../images/childhood/3.jfif" id="img-month1" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BIRTH LIGHTBOX -->
+<div class="blb-overlay" id="blbOverlay" onclick="if(event.target===this)closeBirthLB()">
+  <div class="blb-card">
+    <div class="blb-header">
+      <div class="blb-title"><i class="bi bi-image-fill"></i><span id="blbLabel">الصورة</span></div>
+      <button class="blb-close" onclick="closeBirthLB()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="blb-img-wrap"><img id="blbImg" src="" alt=""></div>
+    <div class="blb-chips" id="blbChips"></div>
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link active" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_childhood.html" id="mob-height"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_childhood.html" id="mob-certs"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_childhood.html" id="mob-edu"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="page-tab" href="timeline.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  var bv = document.getElementById('birth-video');
+  var bvph = document.getElementById('birth-video-ph');
+  if (bv) {
+    bv.addEventListener('error', function() {
+      bv.style.display = 'none';
+      bvph.style.display = 'flex';
+    });
+  }
+</script>
+<script>
+// ===== BIRTH LIGHTBOX =====
+function openBirthLB(src, label, date, age, height, weight) {
+  document.getElementById('blbImg').src = src;
+  document.getElementById('blbLabel').textContent = label;
+  document.getElementById('blbChips').innerHTML =
+    chip('bi-calendar3', date) +
+    chip('bi-person-fill', age) +
+    chip('bi-rulers', height) +
+    chip('bi-activity', weight);
+  document.getElementById('blbOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function chip(icon, val) {
+  return '<div class="blb-chip"><i class="bi ' + icon + '"></i><span>' + val + '</span></div>';
+}
+function closeBirthLB() {
+  document.getElementById('blbOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeBirthLB();
+});
+</script>
+</body>
+</html>

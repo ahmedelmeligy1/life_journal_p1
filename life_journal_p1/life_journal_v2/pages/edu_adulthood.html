@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — التعليم — الشباب</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .edu-body {
+    padding: 24px
+  }
+
+  .edu-nav-wrap {
+    overflow-x: auto;
+    margin-bottom: 22px;
+    padding-bottom: 4px
+  }
+
+  .edu-nav {
+    display: flex;
+    gap: 6px;
+    width: fit-content;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px
+  }
+
+  .en-tab {
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: var(--ease);
+    white-space: nowrap;
+    text-decoration: none
+  }
+
+  .en-tab:hover {
+    background: var(--surface);
+    color: var(--sc)
+  }
+
+  .en-tab.active {
+    background: var(--sc);
+    color: #fff;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--sc) 35%, transparent)
+  }
+
+  .epane {
+    display: none
+  }
+
+  .epane.active {
+    display: block;
+    animation: fadeUp .3s ease
+  }
+
+  .stage-hdr {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px
+  }
+
+  .sh-em {
+    font-size: 34px
+  }
+
+  .stage-hdr h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 3px
+  }
+
+  .sh-yrs {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600
+  }
+
+  .sh-school {
+    font-size: 12px;
+    color: var(--sc);
+    font-weight: 700
+  }
+
+  .grade-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+  }
+
+  .grade-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--ease);
+    animation: fadeUp .35s ease both
+  }
+
+  .grade-card:hover {
+    box-shadow: var(--shadow-h)
+  }
+
+  .grade-card.open {
+    border-color: var(--sc)
+  }
+
+  .gc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    cursor: pointer;
+    gap: 12px;
+    transition: background .2s;
+    user-select: none
+  }
+
+  .gc-header:hover,
+  .grade-card.open .gc-header {
+    background: var(--sbg)
+  }
+
+  .gc-h-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0
+  }
+
+  .gc-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--sc);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc) 18%, transparent)
+  }
+
+  .gc-name {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 6px
+  }
+
+  .gc-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+  }
+
+  .gc-meta span {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px
+  }
+
+  .gc-meta i {
+    color: var(--sc)
+  }
+
+  .gc-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0
+  }
+
+  .gc-grade-box {
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-align: center;
+    min-width: 72px
+  }
+
+  .gc-grade-box span {
+    display: block;
+    font-size: 16px;
+    font-weight: 900
+  }
+
+  .gc-grade-box small {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 600;
+    opacity: .75
+  }
+
+  .gc-chevron {
+    font-size: 16px;
+    color: var(--muted);
+    transition: transform .3s;
+    flex-shrink: 0
+  }
+
+  .gc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease
+  }
+
+  .gc-stats-bar {
+    display: flex;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    flex-wrap: wrap
+  }
+
+  .gc-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 12px
+  }
+
+  .gc-stat i {
+    color: var(--sc);
+    font-size: 14px
+  }
+
+  .gc-stat strong {
+    font-weight: 800;
+    margin-right: 4px
+  }
+
+  .events-list {
+    padding: 0 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--border)
+  }
+
+  .ev-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 14px
+  }
+
+  .ev-row:hover {
+    background: var(--sbg)
+  }
+
+  .ev-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+  }
+
+  .ev-dot i {
+    font-size: 15px;
+    color: #fff
+  }
+
+  .ev-info {
+    flex: 1
+  }
+
+  .ev-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 5px
+  }
+
+  .ev-info h6 {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 3px
+  }
+
+  .ev-info p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 6px
+  }
+
+  .ev-date {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px
+  }
+
+  .today-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0, 0, 0, .08);
+    color: inherit;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 6px
+  }
+
+  /* ===== Event Images ===== */
+  .ev-images {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap
+  }
+
+  .ev-img {
+    width: 110px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    transition: transform .25s, box-shadow .25s;
+    cursor: pointer;
+    background: var(--surface)
+  }
+
+  .ev-img:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(0,0,0,.18)
+  }
+
+  /* Day label chip next to date */
+  .ev-day-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: color-mix(in srgb, var(--sc) 12%, transparent);
+    color: var(--sc);
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    margin-right: 6px
+  }
+
+  @media(max-width:600px) {
+    .edu-body {
+      padding: 16px
+    }
+
+    .gc-header {
+      padding: 14px 16px
+    }
+
+    .gc-stats-bar {
+      padding: 10px 16px
+    }
+
+    .events-list {
+      padding: 0 16px 14px
+    }
+
+    .ev-img {
+      width: 90px;
+      height: 60px
+    }
+  }
+
+  /* ===== Lightbox ===== */
+  .lb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: lbFadeIn .25s ease
+  }
+
+  .lb-overlay.open {
+    display: flex
+  }
+
+  @keyframes lbFadeIn {
+    from { opacity: 0 }
+    to   { opacity: 1 }
+  }
+
+  .lb-box {
+    background: var(--surface, #fff);
+    border-radius: 24px;
+    overflow: hidden;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    animation: lbSlideUp .3s cubic-bezier(.34,1.56,.64,1)
+  }
+
+  @keyframes lbSlideUp {
+    from { transform: translateY(40px) scale(.92); opacity: 0 }
+    to   { transform: translateY(0)    scale(1);   opacity: 1 }
+  }
+
+  .lb-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #111
+  }
+
+  .lb-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block
+  }
+
+  .lb-close {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.55);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s
+  }
+
+  .lb-close:hover { background: rgba(0,0,0,.85) }
+
+  .lb-info {
+    padding: 18px 20px 20px;
+    border-top: 1px solid var(--border, #eee)
+  }
+
+  .lb-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 14px
+  }
+
+  .lb-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px
+  }
+
+  .lb-stat {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--bg, #f8f8f8);
+    border: 1px solid var(--border, #eee);
+    border-radius: 12px;
+    padding: 10px 13px
+  }
+
+  .lb-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+  }
+
+  .lb-stat-icon i {
+    font-size: 15px;
+    color: #fff
+  }
+
+  .lb-stat-text small {
+    display: block;
+    font-size: 10px;
+    color: var(--muted, #888);
+    font-weight: 600;
+    margin-bottom: 1px
+  }
+
+  .lb-stat-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800
+  }
+
+  @media(max-width:480px) {
+    .lb-stats { grid-template-columns: 1fr 1fr }
+    .lb-box { border-radius: 18px }
+  }
+</style>
+</head>
+<body><nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile_adult.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html" ><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab" href="height_adulthood.html" ><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab" href="certs_adulthood.html" ><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab active" href="edu_adulthood.html" ><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#f0f4ff;--ha:#4E9FDE">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="المراحل التعليمية" data-en="Education">المراحل التعليمية</span> <span class="sec-he"></span></h2>
+  <p data-ar="بطاقة لكل سنة دراسية" data-en="A card for every academic year">بطاقة لكل سنة دراسية</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="edu-body">
+  <div class="edu-nav-wrap"><div class="edu-nav"><a class="en-tab active" href="#" onclick="showPane('univ',this);return false"><i class="bi bi-mortarboard-fill"></i><span data-ar="الجامعة" data-en="University">الجامعة</span></a></div></div>
+
+  <div class="epane active" id="pane-univ">
+    <div class="stage-hdr"><span class="sh-em">🎓</span><div>
+      <h3 data-ar="جامعة الملك عبدالله — KAUST" data-en="King Abdullah University KAUST">جامعة الملك عبدالله — KAUST</h3>
+      <div class="sh-school" data-ar="KAUST — تخصص هندسة الحاسب وذكاء اصطناعي" data-en="KAUST — Computer Engineering & AI">KAUST — تخصص هندسة الحاسب وذكاء اصطناعي</div>
+      <div class="sh-yrs">2033 – 2037</div>
+    </div></div>
+
+    <div class="grade-cards-list">
+
+      <!-- Year 1 -->
+      <div class="grade-card" style="animation-delay:0.00s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="السنة الأولى" data-en="Year 1 — CS Fundamentals">السنة الأولى</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2033 – 2034</span>
+              <span><i class="bi bi-person-badge-fill"></i> <span data-ar="18 سنة" data-en="18 Years">18 سنة</span></span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#3B82F61A;border-color:#3B82F6;color:#3B82F6">
+              <span>GPA 4.8</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span>: <strong>173 cm</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span data-ar="الوزن" data-en="Weight">الوزن</span>: <strong>67.0 kg</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="قبول" data-en="Admission">قبول</div>
+                <h6 data-ar="القبول في KAUST" data-en="Accepted at KAUST">القبول في KAUST</h6>
+                <p data-ar="بدأ رحلة التعليم الجامعي في KAUST." data-en="Started university journey at KAUST.">بدأ رحلة التعليم الجامعي في KAUST.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i> <span class="ev-day-chip" id="day-15082033"></span> 15/08/2033</span>
+                <div class="ev-images">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1562774053-701939374585?w=600&q=85" alt="KAUST campus" loading="lazy"
+                    data-title="القبول في KAUST" data-date="15/08/2033" data-day-id="day-15082033" data-age="18 سنة" data-height="173 cm" data-weight="67.0 kg"
+                    onclick="openLightbox(this)">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=85" alt="University admission" loading="lazy"
+                    data-title="القبول في KAUST" data-date="15/08/2033" data-day-id="day-15082033" data-age="18 سنة" data-height="173 cm" data-weight="67.0 kg"
+                    onclick="openLightbox(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year 2 -->
+      <div class="grade-card" style="animation-delay:0.07s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="السنة الثانية" data-en="Year 2 — AI Specialization">السنة الثانية</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2034 – 2035</span>
+              <span><i class="bi bi-person-badge-fill"></i> <span data-ar="19 سنة" data-en="19 Years">19 سنة</span></span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#3B82F61A;border-color:#3B82F6;color:#3B82F6">
+              <span>GPA 4.9</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span>: <strong>173 cm</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span data-ar="الوزن" data-en="Weight">الوزن</span>: <strong>68.0 kg</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-trophy-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B" data-ar="بحث" data-en="Research">بحث</div>
+                <h6 data-ar="ورقة بحثية IEEE" data-en="IEEE Research Paper">ورقة بحثية IEEE</h6>
+                <p data-ar="نشر أول ورقة بحثية في تعلم الآلة." data-en="Published first ML research paper.">نشر أول ورقة بحثية في تعلم الآلة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i> <span class="ev-day-chip" id="day-10042035"></span> 10/04/2035</span>
+                <div class="ev-images">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=85" alt="Research paper" loading="lazy"
+                    data-title="ورقة بحثية IEEE" data-date="10/04/2035" data-day-id="day-10042035" data-age="19 سنة" data-height="173 cm" data-weight="68.0 kg"
+                    onclick="openLightbox(this)">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=85" alt="IEEE conference" loading="lazy"
+                    data-title="ورقة بحثية IEEE" data-date="10/04/2035" data-day-id="day-10042035" data-age="19 سنة" data-height="173 cm" data-weight="68.0 kg"
+                    onclick="openLightbox(this)">
+                </div>
+              </div>
+            </div>
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-cpu-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6" data-ar="ابتكار" data-en="Innovation">ابتكار</div>
+                <h6 data-ar="المركز الأول — مسابقة الابتكار" data-en="1st Place Innovation Competition">المركز الأول — مسابقة الابتكار</h6>
+                <p data-ar="أفضل مشروع تقني على مستوى الجامعات." data-en="Best tech project among all universities.">أفضل مشروع تقني على مستوى الجامعات.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i> <span class="ev-day-chip" id="day-22112034"></span> 22/11/2034</span>
+                <div class="ev-images">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&q=85" alt="Innovation competition" loading="lazy"
+                    data-title="المركز الأول — مسابقة الابتكار" data-date="22/11/2034" data-day-id="day-22112034" data-age="19 سنة" data-height="173 cm" data-weight="68.0 kg"
+                    onclick="openLightbox(this)">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1567168544813-cc03465b4fa8?w=600&q=85" alt="First place award" loading="lazy"
+                    data-title="المركز الأول — مسابقة الابتكار" data-date="22/11/2034" data-day-id="day-22112034" data-age="19 سنة" data-height="173 cm" data-weight="68.0 kg"
+                    onclick="openLightbox(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year 3 -->
+      <div class="grade-card" style="animation-delay:0.14s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="السنة الثالثة" data-en="Year 3 — Advanced Research">السنة الثالثة</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2035 – 2036</span>
+              <span><i class="bi bi-person-badge-fill"></i> <span data-ar="20 سنة" data-en="20 Years">20 سنة</span></span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#16A34A1A;border-color:#16A34A;color:#16A34A">
+              <span>GPA 5.0</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span>: <strong>173 cm</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span data-ar="الوزن" data-en="Weight">الوزن</span>: <strong>69.0 kg</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#D97706"><i class="bi bi-award-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#D977061A;color:#D97706" data-ar="منحة" data-en="Grant">منحة</div>
+                <h6 data-ar="منحة بحثية دولية" data-en="International Research Grant">منحة بحثية دولية</h6>
+                <p data-ar="حصل على منحة بحثية دولية مرموقة." data-en="Received prestigious international research grant.">حصل على منحة بحثية دولية مرموقة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i> <span class="ev-day-chip" id="day-01092035"></span> 01/09/2035</span>
+                <div class="ev-images">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=85" alt="Research grant" loading="lazy"
+                    data-title="منحة بحثية دولية" data-date="01/09/2035" data-day-id="day-01092035" data-age="20 سنة" data-height="173 cm" data-weight="69.0 kg"
+                    onclick="openLightbox(this)">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85" alt="International research" loading="lazy"
+                    data-title="منحة بحثية دولية" data-date="01/09/2035" data-day-id="day-01092035" data-age="20 سنة" data-height="173 cm" data-weight="69.0 kg"
+                    onclick="openLightbox(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year 4 -->
+      <div class="grade-card" style="animation-delay:0.21s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="السنة الرابعة" data-en="Year 4 — Graduation Project">السنة الرابعة</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2036 – 2037</span>
+              <span><i class="bi bi-person-badge-fill"></i> <span data-ar="21 سنة" data-en="21 Years">21 سنة</span></span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#3B82F61A;border-color:#3B82F6;color:#3B82F6">
+              <span>GPA 4.9</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span>: <strong>173 cm</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span data-ar="الوزن" data-en="Weight">الوزن</span>: <strong>69.0 kg</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#7C3AED"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#7C3AED1A;color:#7C3AED" data-ar="تخرج" data-en="Graduation">تخرج</div>
+                <h6 data-ar="مشروع تخرج بامتياز" data-en="Distinction Graduation Project">مشروع تخرج بامتياز</h6>
+                <p data-ar="مشروع AI حاز على جائزة أفضل مشروع." data-en="AI project won best project award.">مشروع AI حاز على جائزة أفضل مشروع.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i> <span class="ev-day-chip" id="day-01062037"></span> 01/06/2037</span>
+                <div class="ev-images">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?w=600&q=85" alt="Graduation ceremony" loading="lazy"
+                    data-title="مشروع تخرج بامتياز" data-date="01/06/2037" data-day-id="day-01062037" data-age="21 سنة" data-height="173 cm" data-weight="69.0 kg"
+                    onclick="openLightbox(this)">
+                  <img class="ev-img" src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600&q=85" alt="Graduation cap" loading="lazy"
+                    data-title="مشروع تخرج بامتياز" data-date="01/06/2037" data-day-id="day-01062037" data-age="21 سنة" data-height="173 cm" data-weight="69.0 kg"
+                    onclick="openLightbox(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== Lightbox Modal ===== -->
+<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox(event)">
+  <div class="lb-box" id="lbBox">
+    <div class="lb-img-wrap">
+      <img id="lbImg" src="" alt="">
+      <button class="lb-close" onclick="closeLightboxDirect()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="lb-info">
+      <div class="lb-title" id="lbTitle"></div>
+      <div class="lb-stats">
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#3B82F6"><i class="bi bi-calendar3"></i></div>
+          <div class="lb-stat-text"><small data-ar="التاريخ" data-en="Date">التاريخ</small><strong id="lbDate"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#7C3AED"><i class="bi bi-sun-fill"></i></div>
+          <div class="lb-stat-text"><small data-ar="اليوم" data-en="Day">اليوم</small><strong id="lbDay"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#F59E0B"><i class="bi bi-person-fill"></i></div>
+          <div class="lb-stat-text"><small data-ar="العمر" data-en="Age">العمر</small><strong id="lbAge"></strong></div>
+        </div>
+        <div class="lb-stat">
+          <div class="lb-stat-icon" style="background:#16A34A"><i class="bi bi-rulers"></i></div>
+          <div class="lb-stat-text"><small data-ar="الطول" data-en="Height">الطول</small><strong id="lbHeight"></strong></div>
+        </div>
+        <div class="lb-stat" style="grid-column:1/-1">
+          <div class="lb-stat-icon" style="background:#D97706"><i class="bi bi-activity"></i></div>
+          <div class="lb-stat-text"><small data-ar="الوزن" data-en="Weight">الوزن</small><strong id="lbWeight"></strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile_adult.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html" ><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link" href="height_adulthood.html" ><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_adulthood.html" ><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link active" href="edu_adulthood.html" ><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+      <a class="page-tab" href="timeline_adulthood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  const td = document.getElementById('todayDate');
+  if(td) td.textContent = new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+<script>
+function showPane(id,btn){
+  document.querySelectorAll('.epane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.en-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleCard(header){
+  const card=header.closest('.grade-card');
+  const isOpen=card.classList.contains('open');
+  card.closest('.grade-cards-list').querySelectorAll('.grade-card.open').forEach(c=>{
+    c.classList.remove('open');c.querySelector('.gc-body').style.maxHeight='0';
+    c.querySelector('.gc-chevron').style.transform='';
+  });
+  if(!isOpen){card.classList.add('open');const body=card.querySelector('.gc-body');
+    body.style.maxHeight=body.scrollHeight+'px';
+    card.querySelector('.gc-chevron').style.transform='rotate(180deg)';
+  }
+}
+
+// ===== Day name next to each date =====
+const dayNamesAr = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const dayNamesEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+const eventDates = {
+  'day-15082033': new Date(2033, 7, 15),
+  'day-10042035': new Date(2035, 3, 10),
+  'day-22112034': new Date(2034, 10, 22),
+  'day-01092035': new Date(2035, 8, 1),
+  'day-01062037': new Date(2037, 5, 1)
+};
+
+Object.entries(eventDates).forEach(([id, date]) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const dayIndex = date.getDay();
+  el.setAttribute('data-ar', dayNamesAr[dayIndex]);
+  el.setAttribute('data-en', dayNamesEn[dayIndex]);
+  el.textContent = dayNamesAr[dayIndex];
+});
+
+// ===== Lightbox =====
+function openLightbox(img) {
+  const dayEl = document.getElementById(img.dataset.dayId);
+  const dayText = dayEl ? dayEl.textContent : '';
+  document.getElementById('lbImg').src = img.src;
+  document.getElementById('lbImg').alt = img.alt;
+  document.getElementById('lbTitle').textContent = img.dataset.title;
+  document.getElementById('lbDate').textContent = img.dataset.date;
+  document.getElementById('lbDay').textContent = dayText;
+  document.getElementById('lbAge').textContent = img.dataset.age;
+  document.getElementById('lbHeight').textContent = img.dataset.height;
+  document.getElementById('lbWeight').textContent = img.dataset.weight;
+  document.getElementById('lbOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e.target === document.getElementById('lbOverlay')) closeLightboxDirect();
+}
+function closeLightboxDirect() {
+  document.getElementById('lbOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightboxDirect(); });
+
+const origToggle = window.toggleLang;
+window.toggleLang = function() {
+  if (origToggle) origToggle();
+  setTimeout(() => {
+    const isEn = document.documentElement.getAttribute('data-lang') === 'en';
+    Object.keys(eventDates).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = isEn ? el.getAttribute('data-en') : el.getAttribute('data-ar');
+    });
+  }, 50);
+};
+</script>
+</body>
+</html>

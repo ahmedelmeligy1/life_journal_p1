@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — التعليم — المراهقة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .edu-body { padding: 24px }
+
+  .edu-nav-wrap { overflow-x: auto; margin-bottom: 22px; padding-bottom: 4px }
+  .edu-nav { display: flex; gap: 6px; width: fit-content; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 5px }
+  .en-tab { background: transparent; border: none; border-radius: 14px; padding: 10px 20px; cursor: pointer; display: flex; align-items: center; gap: 7px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--muted); transition: var(--ease); white-space: nowrap; text-decoration: none }
+  .en-tab:hover { background: var(--surface); color: var(--sc) }
+  .en-tab.active { background: var(--sc); color: #fff; box-shadow: 0 4px 14px color-mix(in srgb, var(--sc) 35%, transparent) }
+
+  .epane { display: none }
+  .epane.active { display: block; animation: fadeUp .3s ease }
+
+  .stage-hdr { display: flex; align-items: center; gap: 14px; padding: 16px 20px; margin-bottom: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px }
+  .sh-em { font-size: 34px }
+  .stage-hdr h3 { font-size: 16px; font-weight: 800; margin-bottom: 3px }
+  .sh-yrs { font-size: 12px; color: var(--muted); font-weight: 600 }
+  .sh-school { font-size: 12px; color: var(--sc); font-weight: 700 }
+
+  .grade-cards-list { display: flex; flex-direction: column; gap: 14px }
+  .grade-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); transition: var(--ease); animation: fadeUp .35s ease both }
+  .grade-card:hover { box-shadow: var(--shadow-h) }
+  .grade-card.open { border-color: var(--sc) }
+
+  .gc-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; cursor: pointer; gap: 12px; transition: background .2s; user-select: none }
+  .gc-header:hover, .grade-card.open .gc-header { background: var(--sbg) }
+  .gc-h-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0 }
+  .gc-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--sc); flex-shrink: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc) 18%, transparent) }
+  .gc-name { font-size: 15px; font-weight: 800; margin-bottom: 6px }
+  .gc-meta { display: flex; gap: 10px; flex-wrap: wrap }
+  .gc-meta span { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 4px }
+  .gc-meta i { color: var(--sc) }
+  .gc-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
+  .gc-grade-box { border: 2px solid; border-radius: 12px; padding: 8px 16px; text-align: center; min-width: 72px }
+  .gc-grade-box span { display: block; font-size: 16px; font-weight: 900 }
+  .gc-grade-box small { display: block; font-size: 9.5px; font-weight: 600; opacity: .75 }
+  .gc-chevron { font-size: 16px; color: var(--muted); transition: transform .3s; flex-shrink: 0 }
+  .gc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease }
+
+  .gc-stats-bar { display: flex; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--border); background: var(--bg); flex-wrap: wrap }
+  .gc-stat { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; font-size: 12px }
+  .gc-stat i { color: var(--sc); font-size: 14px }
+  .gc-stat strong { font-weight: 800; margin-right: 4px }
+
+  .events-list { padding: 0 22px 18px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border) }
+  .ev-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--bg); border-radius: 14px }
+  .ev-row:hover { background: var(--sbg) }
+  .ev-dot { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0 }
+  .ev-dot i { font-size: 15px; color: #fff }
+  .ev-info { flex: 1 }
+  .ev-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 5px }
+  .ev-info h6 { font-size: 13px; font-weight: 800; margin-bottom: 3px }
+  .ev-info p { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin: 0 0 6px }
+
+  /* date with day name */
+  .ev-date { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; margin-bottom: 8px }
+  .ev-day-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 2px 9px; font-size: 10.5px; font-weight: 700; color: var(--sc); margin-bottom: 8px }
+
+  /* event thumbnails */
+  .ev-thumbs { display: flex; gap: 6px; margin-top: 4px }
+  .ev-thumb { width: 52px; height: 44px; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; flex-shrink: 0; transition: transform .2s, box-shadow .2s }
+  .ev-thumb:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba(0,0,0,.2) }
+  .ev-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+  .ev-thumb-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px }
+
+  .today-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,.08); color: inherit; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 700; margin-top: 6px }
+
+  /* ========== IMAGE MODAL ========== */
+  .img-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.82); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; backdrop-filter: blur(6px); padding: 16px }
+  .img-modal-overlay.active { opacity: 1; pointer-events: all }
+  .img-modal-box { background: #fff; border-radius: 24px; overflow: hidden; max-width: 480px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,.5); transform: scale(.88) translateY(20px); transition: transform .3s cubic-bezier(.34,1.56,.64,1); font-family: 'Tajawal', sans-serif }
+  .img-modal-overlay.active .img-modal-box { transform: scale(1) translateY(0) }
+  .img-modal-img-wrap { position: relative; width: 100%; height: 260px; background: #111 }
+  .img-modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block }
+  .img-modal-close { position: absolute; top: 12px; left: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,.55); border: none; color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s }
+  .img-modal-close:hover { background: rgba(0,0,0,.85) }
+  .img-modal-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, rgba(0,0,0,.55), transparent) }
+  .img-modal-title-overlay { position: absolute; bottom: 12px; right: 16px; color: #fff; font-size: 14px; font-weight: 800; text-shadow: 0 1px 6px rgba(0,0,0,.5) }
+  .img-modal-info { padding: 18px 20px 20px }
+  .img-modal-day-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-radius: 50px; padding: 6px 16px; font-size: 13px; font-weight: 700; margin-bottom: 14px }
+  .img-modal-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px }
+  .imi { background: #f5f7fa; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 9px }
+  .imi .imi-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0 }
+  .imi .imi-text label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .04em; display: block; margin-bottom: 2px }
+  .imi .imi-text span { font-size: 13px; font-weight: 800; color: #222 }
+  .img-modal-footer { border-top: 1px solid #eee; padding: 12px 20px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #888 }
+
+  @media(max-width:600px) {
+    .edu-body { padding: 16px }
+    .gc-header { padding: 14px 16px }
+    .gc-stats-bar { padding: 10px 16px }
+    .events-list { padding: 0 16px 14px }
+    .img-modal-img-wrap { height: 200px }
+  }
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile_teen.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab" href="height_adolescence.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab" href="certs_adolescence.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab active" href="edu_adolescence.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_adolescence.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#f0f4ff;--ha:#4E9FDE">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="المراحل التعليمية" data-en="Education">المراحل التعليمية</span> <span class="sec-he"></span></h2>
+  <p data-ar="بطاقة لكل سنة دراسية" data-en="A card for every academic year">بطاقة لكل سنة دراسية</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="edu-body">
+  <div class="edu-nav-wrap">
+    <div class="edu-nav">
+      <a class="en-tab active" href="#" onclick="showPane('mid',this);return false"><i class="bi bi-book-fill"></i><span data-ar="المتوسطة" data-en="Middle School">المتوسطة</span></a>
+      <a class="en-tab" href="#" onclick="showPane('high',this);return false"><i class="bi bi-journal-bookmark-fill"></i><span data-ar="الثانوية" data-en="High School">الثانوية</span></a>
+    </div>
+  </div>
+
+  <!-- ===== MIDDLE SCHOOL ===== -->
+  <div class="epane active" id="pane-mid">
+    <div class="stage-hdr"><span class="sh-em">📘</span><div>
+      <h3 data-ar="المتوسطة" data-en="Middle School">المتوسطة</h3>
+      <div class="sh-school" data-ar="مدرسة الرواد المتوسطة" data-en="Al-Rowad Middle School">مدرسة الرواد المتوسطة</div>
+      <div class="sh-yrs">2027 – 2030</div>
+    </div></div>
+    <div class="grade-cards-list">
+
+      <!-- Grade 7 -->
+      <div class="grade-card" style="animation-delay:0.00s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الأول المتوسط" data-en="Grade 7 — Middle">الصف الأول المتوسط</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2027 – 2028</span>
+              <span><i class="bi bi-person-badge-fill"></i> 12 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>95%</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span>: <strong>148 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span data-ar="الوزن" data-en="Weight">الوزن</span>: <strong>45.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <!-- Event 1 -->
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-calculator-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6 data-ar="المركز الأول في الرياضيات" data-en="1st Place Math">المركز الأول في الرياضيات</h6>
+                <p data-ar="فاز على مستوى المدرسة." data-en="Won at school level.">فاز على مستوى المدرسة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-22032028"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 22/03/2028</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/2.jfif','المركز الأول في الرياضيات','1st Place Math','22/03/2028','12 سنة','12 Years','45.0 كغ','45.0 kg','148 سم','148 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/2.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#3B82F622">🏆</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/4.jfif','المركز الأول في الرياضيات','1st Place Math','22/03/2028','12 سنة','12 Years','45.0 كغ','45.0 kg','148 سم','148 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/4.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#3B82F622">📐</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#059669"><i class="bi bi-trophy-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#0596691A;color:#059669">بطولة</div>
+                <h6 data-ar="بطولة كرة القدم المدرسية" data-en="School Football Championship">بطولة كرة القدم المدرسية</h6>
+                <p data-ar="قاد الفريق للفوز ببطولة المنطقة." data-en="Led team to regional championship.">قاد الفريق للفوز ببطولة المنطقة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-20032027"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 20/03/2027</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/1.jfif','بطولة كرة القدم المدرسية','School Football Championship','20/03/2027','12 سنة','12 Years','45.0 كغ','45.0 kg','148 سم','148 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/1.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#05966922">⚽</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/3.jfif','بطولة كرة القدم المدرسية','School Football Championship','20/03/2027','12 سنة','12 Years','45.0 كغ','45.0 kg','148 سم','148 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/3.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#05966922">🏅</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade 8 -->
+      <div class="grade-card" style="animation-delay:0.07s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الثاني المتوسط" data-en="Grade 8">الصف الثاني المتوسط</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2028 – 2029</span>
+              <span><i class="bi bi-person-badge-fill"></i> 13 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>97%</span><small data-ar="التقدير" data-en="Grade">التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span>الطول</span>: <strong>156 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span>الوزن</span>: <strong>52.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <!-- Event -->
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#D97706"><i class="bi bi-mic-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#D977061A;color:#D97706">خطابة</div>
+                <h6 data-ar="بطولة الخطابة الوطنية" data-en="National Speech Championship">بطولة الخطابة الوطنية</h6>
+                <p data-ar="أفضل خطيب شاب على مستوى المملكة." data-en="Best young speaker nationally.">أفضل خطيب شاب على مستوى المملكة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-10052028"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 10/05/2028</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/5.jpg','بطولة الخطابة الوطنية','National Speech Championship','10/05/2028','13 سنة','13 Years','52.0 كغ','52.0 kg','156 سم','156 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/5.jpg" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#D9770622">🎙️</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/6.jfif','بطولة الخطابة الوطنية','National Speech Championship','10/05/2028','13 سنة','13 Years','52.0 كغ','52.0 kg','156 سم','156 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/6.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#D9770622">🏆</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade 9 -->
+      <div class="grade-card" style="animation-delay:0.14s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الثالث المتوسط" data-en="Grade 9">الصف الثالث المتوسط</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2029 – 2030</span>
+              <span><i class="bi bi-person-badge-fill"></i> 14 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>99%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span>الطول</span>: <strong>163 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span>الوزن</span>: <strong>58.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-award-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B">تكريم</div>
+                <h6>طالب متميز — المنطقة</h6>
+                <p>من أفضل الطلاب في المنطقة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-15062030"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 15/06/2030</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/1.jfif','طالب متميز — المنطقة','District Excellence Award','15/06/2030','14 سنة','14 Years','58.0 كغ','58.0 kg','163 سم','163 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/1.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#F59E0B22">🌟</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/2.jfif','طالب متميز — المنطقة','District Excellence Award','15/06/2030','14 سنة','14 Years','58.0 كغ','58.0 kg','163 سم','163 cm','مدرسة الرواد المتوسطة','Al-Rowad Middle School')">
+                    <img src="../images/Adolescence/2.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#F59E0B22">🏅</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== HIGH SCHOOL ===== -->
+  <div class="epane" id="pane-high">
+    <div class="stage-hdr"><span class="sh-em">🏫</span><div>
+      <h3 data-ar="الثانوية" data-en="High School">الثانوية</h3>
+      <div class="sh-school" data-ar="ثانوية الأمير سلطان" data-en="Prince Sultan High School">ثانوية الأمير سلطان</div>
+      <div class="sh-yrs">2030 – 2033</div>
+    </div></div>
+    <div class="grade-cards-list">
+
+      <!-- Grade 10 -->
+      <div class="grade-card" style="animation-delay:0.00s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الأول الثانوي" data-en="Grade 10">الصف الأول الثانوي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2030 – 2031</span>
+              <span><i class="bi bi-person-badge-fill"></i> 15 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>96%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span>الطول</span>: <strong>168 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span>الوزن</span>: <strong>62.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-robot"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">تقنية</div>
+                <h6>المركز الثاني روبوتيك وطنياً</h6>
+                <p>مسابقة وطنية للروبوتيك.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-20042031"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 20/04/2031</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/3.jfif','المركز الثاني روبوتيك وطنياً','2nd Place National Robotics','20/04/2031','15 سنة','15 Years','62.0 كغ','62.0 kg','168 سم','168 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/3.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#3B82F622">🤖</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/5.jpg','المركز الثاني روبوتيك وطنياً','2nd Place National Robotics','20/04/2031','15 سنة','15 Years','62.0 كغ','62.0 kg','168 سم','168 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/5.jpg" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#3B82F622">🥈</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade 11 -->
+      <div class="grade-card" style="animation-delay:0.07s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الثاني الثانوي" data-en="Grade 11">الصف الثاني الثانوي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2031 – 2032</span>
+              <span><i class="bi bi-person-badge-fill"></i> 16 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>98%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span>الطول</span>: <strong>171 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span>الوزن</span>: <strong>64.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-award-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B">تكريم</div>
+                <h6>طالب متميز المنطقة</h6>
+                <p>من أفضل 10 طلاب في المنطقة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-08052032"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 08/05/2032</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/4.jfif','طالب متميز المنطقة','District Distinguished Student','08/05/2032','16 سنة','16 Years','64.0 كغ','64.0 kg','171 سم','171 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/4.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#F59E0B22">🌟</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/6.jfif','طالب متميز المنطقة','District Distinguished Student','08/05/2032','16 سنة','16 Years','64.0 كغ','64.0 kg','171 سم','171 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/6.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#F59E0B22">🏅</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade 12 -->
+      <div class="grade-card" style="animation-delay:0.14s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name" data-ar="الصف الثالث الثانوي" data-en="Grade 12">الصف الثالث الثانوي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i> 2032 – 2033</span>
+              <span><i class="bi bi-person-badge-fill"></i> 17 سنة</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#16A34A1A;border-color:#16A34A;color:#16A34A">
+              <span>99.5%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i><span>الطول</span>: <strong>172 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i><span>الوزن</span>: <strong>65.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#7C3AED"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#7C3AED1A;color:#7C3AED">تخرج</div>
+                <h6>التخرج بمرتبة الشرف الأولى</h6>
+                <p>أعلى معدل في تاريخ المدرسة.</p>
+                <div class="ev-day-chip"><i class="bi bi-calendar-week-fill"></i><span id="day-20062033"></span></div>
+                <div class="ev-date"><i class="bi bi-calendar3"></i> 20/06/2033</div>
+                <div class="ev-thumbs">
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/5.jpg','التخرج بمرتبة الشرف الأولى','Graduated First Class Honors','20/06/2033','17 سنة','17 Years','65.0 كغ','65.0 kg','172 سم','172 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/5.jpg" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#7C3AED22">🎓</div>
+                  </div>
+                  <div class="ev-thumb" onclick="openImgModal('../images/Adolescence/1.jfif','التخرج بمرتبة الشرف الأولى','Graduated First Class Honors','20/06/2033','17 سنة','17 Years','65.0 كغ','65.0 kg','172 سم','172 cm','ثانوية الأمير سلطان','Prince Sultan High School')">
+                    <img src="../images/Adolescence/1.jfif" alt="" onerror="this.style.display='none'">
+                    <div class="ev-thumb-placeholder" style="background:#7C3AED22">🏆</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========== IMAGE MODAL ========== -->
+<div class="img-modal-overlay" id="imgModal" onclick="handleModalClick(event)">
+  <div class="img-modal-box" id="imgModalBox">
+    <div class="img-modal-img-wrap">
+      <img id="modalImg" src="" alt="">
+      <button class="img-modal-close" onclick="closeImgModal()"><i class="bi bi-x-lg"></i></button>
+      <div class="img-modal-gradient"></div>
+      <div class="img-modal-title-overlay" id="modalTitle"></div>
+    </div>
+    <div class="img-modal-info">
+      <div class="img-modal-day-badge">
+        <i class="bi bi-calendar-week-fill"></i>
+        <span id="modalDayName"></span>
+      </div>
+      <div class="img-modal-info-grid">
+        <div class="imi">
+          <div class="imi-icon" style="background:#EEF2FF;color:#4776E6"><i class="bi bi-calendar-date-fill"></i></div>
+          <div class="imi-text"><label id="modal-lbl-date">التاريخ</label><span id="modalDate"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#FFF7ED;color:#D97706"><i class="bi bi-person-fill"></i></div>
+          <div class="imi-text"><label id="modal-lbl-age">العمر</label><span id="modalAge"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#F0FDF4;color:#059669"><i class="bi bi-speedometer2"></i></div>
+          <div class="imi-text"><label id="modal-lbl-weight">الوزن</label><span id="modalWeight"></span></div>
+        </div>
+        <div class="imi">
+          <div class="imi-icon" style="background:#FDF4FF;color:#9333EA"><i class="bi bi-rulers"></i></div>
+          <div class="imi-text"><label id="modal-lbl-height">الطول</label><span id="modalHeight"></span></div>
+        </div>
+      </div>
+      <div class="img-modal-footer">
+        <i class="bi bi-building"></i>
+        <span id="modalSchool">مدرسة الرواد المتوسطة</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span>الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span>المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span>الشباب</span></a>
+    <div class="mobile-stage-label">الصفحات</div>
+    <a class="mobile-nav-link" href="profile_teen.html"><i class="bi bi-house-fill"></i><span>الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span>الولادة</span></a>
+    <a class="mobile-nav-link" href="height_adolescence.html"><i class="bi bi-rulers"></i><span>الطول</span></a>
+    <a class="mobile-nav-link" href="certs_adolescence.html"><i class="bi bi-award-fill"></i><span>الشهادات</span></a>
+    <a class="mobile-nav-link active" href="edu_adolescence.html"><i class="bi bi-mortarboard-fill"></i><span>التعليم</span></a>
+    <a class="mobile-nav-link" href="timeline_adolescence.html"><i class="bi bi-calendar3"></i><span>السنوات</span></a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  /* ===== LANGUAGE SYSTEM ===== */
+  const arDays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const enDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  let currentLang = localStorage.getItem('lang') || 'ar';
+
+  function getDayName(dateStr, lang) {
+    const p = dateStr.split('/');
+    if(p.length !== 3) return '';
+    const d = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+    if(isNaN(d)) return '';
+    return lang === 'ar' ? 'يوم ' + arDays[d.getDay()] : enDays[d.getDay()];
+  }
+
+  // day chip map: id -> date string
+  const dayMap = {
+    'day-22032028': '22/03/2028',
+    'day-20032027': '20/03/2027',
+    'day-10052028': '10/05/2028',
+    'day-15062030': '15/06/2030',
+    'day-20042031': '20/04/2031',
+    'day-08052032': '08/05/2032',
+    'day-20062033': '20/06/2033',
+  };
+
+  function applyLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+
+    // direction & html lang
+    document.documentElement.lang = lang === 'ar' ? 'ar' : 'en';
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    // Bootstrap RTL/LTR swap
+    const bsLink = document.getElementById('bsLink');
+    if(bsLink) bsLink.href = lang === 'ar'
+      ? 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
+      : 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+
+    // lang button label
+    const lbl = document.getElementById('langLabel');
+    if(lbl) lbl.textContent = lang === 'ar' ? 'EN' : 'ع';
+
+    // all data-ar / data-en elements
+    document.querySelectorAll('[data-ar]').forEach(el => {
+      el.textContent = lang === 'ar' ? el.dataset.ar : el.dataset.en;
+    });
+
+    // modal labels
+    const modalLabels = {
+      'modal-lbl-date':   { ar: 'التاريخ',  en: 'Date'   },
+      'modal-lbl-age':    { ar: 'العمر',     en: 'Age'    },
+      'modal-lbl-weight': { ar: 'الوزن',     en: 'Weight' },
+      'modal-lbl-height': { ar: 'الطول',     en: 'Height' },
+      'modal-lbl-school': { ar: 'المدرسة',   en: 'School' },
+    };
+    Object.entries(modalLabels).forEach(([id, t]) => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = lang === 'ar' ? t.ar : t.en;
+    });
+
+    // today date locale
+    const td = document.getElementById('todayDate');
+    if(td) td.textContent = new Date().toLocaleDateString(
+      lang === 'ar' ? 'ar-SA' : 'en-GB',
+      {weekday:'long', year:'numeric', month:'long', day:'numeric'}
+    );
+
+    // day chips
+    Object.entries(dayMap).forEach(([id, date]) => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = getDayName(date, lang);
+    });
+
+    // modal school label
+    const ms = document.getElementById('modalSchool');
+    if(ms) ms.dataset.currentLang = lang;
+  }
+
+  // Override toggleLang from app.js
+  function toggleLang() {
+    applyLang(currentLang === 'ar' ? 'en' : 'ar');
+  }
+
+  // Today date on load
+  const td = document.getElementById('todayDate');
+  if(td) td.textContent = new Date().toLocaleDateString(
+    currentLang === 'ar' ? 'ar-SA' : 'en-GB',
+    {weekday:'long', year:'numeric', month:'long', day:'numeric'}
+  );
+
+  // Fill day chips on load
+  Object.entries(dayMap).forEach(([id, date]) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = getDayName(date, currentLang);
+  });
+
+  // Apply saved lang on load
+  if(currentLang === 'en') applyLang('en');
+
+  /* ===== MODAL ===== */
+  // store modal data for lang refresh
+  let _modalData = {};
+
+  function openImgModal(src, titleAr, titleEn, date, ageAr, ageEn, weightAr, weightEn, heightAr, heightEn, schoolAr, schoolEn) {
+    _modalData = {src, titleAr, titleEn, date, ageAr, ageEn, weightAr, weightEn, heightAr, heightEn, schoolAr, schoolEn};
+    _renderModal();
+    document.getElementById('imgModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _renderModal() {
+    const lang = currentLang;
+    const d = _modalData;
+    document.getElementById('modalImg').src = d.src;
+    document.getElementById('modalTitle').textContent = lang === 'ar' ? d.titleAr : d.titleEn;
+    document.getElementById('modalDate').textContent = d.date;
+    document.getElementById('modalAge').textContent = lang === 'ar' ? d.ageAr : d.ageEn;
+    document.getElementById('modalWeight').textContent = lang === 'ar' ? d.weightAr : d.weightEn;
+    document.getElementById('modalHeight').textContent = lang === 'ar' ? d.heightAr : d.heightEn;
+    document.getElementById('modalSchool').textContent = lang === 'ar' ? (d.schoolAr || 'مدرسة الرواد المتوسطة') : (d.schoolEn || 'Al-Rowad Middle School');
+    document.getElementById('modalDayName').textContent = getDayName(d.date, lang) + ' — ' + d.date;
+    // modal labels
+    const lbls = {
+      'modal-lbl-date': {ar:'التاريخ', en:'Date'},
+      'modal-lbl-age':  {ar:'العمر',   en:'Age'},
+      'modal-lbl-weight':{ar:'الوزن',  en:'Weight'},
+      'modal-lbl-height':{ar:'الطول',  en:'Height'},
+    };
+    Object.entries(lbls).forEach(([id,t])=>{ const el=document.getElementById(id); if(el) el.textContent=lang==='ar'?t.ar:t.en; });
+  }
+
+  function closeImgModal() {
+    document.getElementById('imgModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function handleModalClick(e) {
+    if(e.target === document.getElementById('imgModal')) closeImgModal();
+  }
+
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeImgModal(); });
+
+  /* ===== PANE & ACCORDION ===== */
+  function showPane(id, btn) {
+    document.querySelectorAll('.epane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.en-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('pane-'+id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleCard(header) {
+    const card = header.closest('.grade-card');
+    const isOpen = card.classList.contains('open');
+    card.closest('.grade-cards-list').querySelectorAll('.grade-card.open').forEach(c => {
+      c.classList.remove('open');
+      c.querySelector('.gc-body').style.maxHeight = '0';
+      c.querySelector('.gc-chevron').style.transform = '';
+    });
+    if(!isOpen) {
+      card.classList.add('open');
+      const body = card.querySelector('.gc-body');
+      body.style.maxHeight = body.scrollHeight + 'px';
+      card.querySelector('.gc-chevron').style.transform = 'rotate(180deg)';
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — التعليم — الطفولة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<style>
+  .edu-body { padding: 24px }
+
+  .edu-nav-wrap { overflow-x: auto; margin-bottom: 22px; padding-bottom: 4px }
+  .edu-nav {
+    display: flex; gap: 6px; width: fit-content;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px
+  }
+  .en-tab {
+    background: transparent; border: none; border-radius: 14px;
+    padding: 10px 20px; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: var(--muted); transition: var(--ease);
+    white-space: nowrap; text-decoration: none
+  }
+  .en-tab:hover { background: var(--surface); color: var(--sc) }
+  .en-tab.active {
+    background: var(--sc); color: #fff;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--sc) 35%, transparent)
+  }
+
+  .epane { display: none }
+  .epane.active { display: block; animation: fadeUp .3s ease }
+
+  .stage-hdr {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px; margin-bottom: 18px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px
+  }
+  .sh-em { font-size: 34px }
+  .stage-hdr h3 { font-size: 16px; font-weight: 800; margin-bottom: 3px }
+  .sh-yrs { font-size: 12px; color: var(--muted); font-weight: 600; font-family: 'Poppins', sans-serif; }
+  .sh-school { font-size: 12px; color: var(--sc); font-weight: 700 }
+
+  .grade-cards-list { display: flex; flex-direction: column; gap: 14px }
+
+  .grade-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: var(--shadow); transition: var(--ease);
+    animation: fadeUp .35s ease both
+  }
+  .grade-card:hover { box-shadow: var(--shadow-h) }
+  .grade-card.open { border-color: var(--sc) }
+
+  .gc-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; cursor: pointer; gap: 12px;
+    transition: background .2s; user-select: none
+  }
+  .gc-header:hover, .grade-card.open .gc-header { background: var(--sbg) }
+
+  .gc-h-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0 }
+  .gc-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--sc); flex-shrink: 0;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc) 18%, transparent)
+  }
+  .gc-name { font-size: 15px; font-weight: 800; margin-bottom: 6px }
+  .gc-meta { display: flex; gap: 10px; flex-wrap: wrap }
+  .gc-meta span { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 4px }
+  .gc-meta i { color: var(--sc) }
+  .gc-meta-num { font-family: 'Poppins', sans-serif; }
+
+  .gc-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
+  .gc-grade-box {
+    border: 2px solid; border-radius: 12px;
+    padding: 8px 16px; text-align: center; min-width: 72px
+  }
+  .gc-grade-box span { display: block; font-size: 16px; font-weight: 900; font-family: 'Poppins', sans-serif; }
+  .gc-grade-box small { display: block; font-size: 9.5px; font-weight: 600; opacity: .75 }
+  .gc-chevron { font-size: 16px; color: var(--muted); transition: transform .3s; flex-shrink: 0 }
+
+  .gc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease }
+
+  .gc-stats-bar {
+    display: flex; gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--bg); flex-wrap: wrap
+  }
+  .gc-stat {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px; font-size: 12px
+  }
+  .gc-stat i { color: var(--sc); font-size: 14px }
+  .gc-stat strong { font-weight: 800; margin-right: 4px; font-family: 'Poppins', sans-serif; }
+
+  /* events */
+  .events-list {
+    padding: 0 22px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    border-top: 1px solid var(--border)
+  }
+  .ev-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px; background: var(--bg); border-radius: 14px
+  }
+  .ev-row:hover { background: var(--sbg) }
+  .ev-dot {
+    width: 36px; height: 36px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0
+  }
+  .ev-dot i { font-size: 15px; color: #fff }
+  .ev-info { flex: 1; min-width: 0 }
+  .ev-badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px; margin-bottom: 5px
+  }
+  .ev-info h6 { font-size: 13px; font-weight: 800; margin-bottom: 3px }
+  .ev-info p { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin: 0 0 6px }
+  .ev-date {
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'Poppins', sans-serif; margin-bottom: 9px;
+  }
+
+  /* ── photos INSIDE each event ── */
+  .ev-photos {
+    display: flex; gap: 7px; margin-top: 2px;
+  }
+  .ev-photo {
+    width: 80px; height: 70px;
+    border-radius: 10px; overflow: hidden;
+    position: relative; cursor: pointer; flex-shrink: 0;
+    background: var(--border);
+  }
+  .ev-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .3s, opacity .2s;
+  }
+  .ev-photo:hover img { transform: scale(1.1); opacity: .82; }
+  .ev-photo::after {
+    content: '\F52A'; font-family: 'bootstrap-icons';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #fff;
+    background: rgba(0,0,0,.3);
+    opacity: 0; transition: opacity .2s; z-index: 2;
+  }
+  .ev-photo:hover::after { opacity: 1; }
+  .ev-photo-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; opacity: .2;
+  }
+
+  .today-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,0,0,.08); color: inherit;
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 11px; font-weight: 700; margin-top: 6px
+  }
+
+  @media(max-width:600px) {
+    .edu-body { padding: 16px }
+    .gc-header { padding: 14px 16px }
+    .gc-stats-bar { padding: 10px 16px }
+    .events-list { padding: 0 16px 14px }
+    .ev-photo { width: 65px; height: 58px; }
+  }
+
+  /* ===== LIGHTBOX ===== */
+  .lb-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.85); z-index: 99999;
+    align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(8px);
+  }
+  .lb-overlay.open { display: flex; animation: lbFadeIn .22s ease; }
+  @keyframes lbFadeIn { from{opacity:0}to{opacity:1} }
+  .lb-box {
+    background: var(--surface,#fff);
+    border-radius: 22px; overflow: hidden;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    animation: lbUp .28s ease; position: relative;
+  }
+  @keyframes lbUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .lb-img-wrap {
+    width:100%; height:320px; background:#111;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .lb-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .lb-close {
+    position:absolute; top:11px; left:11px;
+    width:34px; height:34px; background:rgba(0,0,0,.5);
+    border:none; border-radius:50%; color:#fff; font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:10; transition:background .2s;
+  }
+  .lb-close:hover{background:rgba(0,0,0,.8);}
+  .lb-caption {
+    padding:14px 18px; direction:rtl;
+    font-size:13px; font-weight:700; color:var(--muted);
+    border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:8px;
+  }
+  .lb-caption i{color:var(--sc);}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab active" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#f0f4ff;--ha:#4E9FDE">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="المراحل التعليمية" data-en="Education">المراحل التعليمية</span> <span class="sec-he"></span></h2>
+  <p data-ar="بطاقة لكل سنة دراسية" data-en="A card for every academic year">بطاقة لكل سنة دراسية</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="edu-body">
+  <div class="edu-nav-wrap">
+    <div class="edu-nav">
+      <a class="en-tab active" href="#" onclick="showPane('kg',this);return false">
+        <i class="bi bi-balloon-heart-fill"></i><span data-ar="الطفولة المبكرة" data-en="Early Childhood">الطفولة المبكرة</span>
+      </a>
+      <a class="en-tab" href="#" onclick="showPane('prim',this);return false">
+        <i class="bi bi-pencil-fill"></i><span data-ar="الابتدائية" data-en="Primary">الابتدائية</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ============================================================ KG -->
+  <div class="epane active" id="pane-kg">
+    <div class="stage-hdr">
+      <span class="sh-em">🌸</span>
+      <div>
+        <h3 data-ar="الطفولة المبكرة" data-en="Early Childhood">الطفولة المبكرة</h3>
+        <div class="sh-school">الروضة الدولية بالرياض</div>
+        <div class="sh-yrs">2019 – 2021</div>
+      </div>
+    </div>
+    <div class="grade-cards-list">
+
+      <!-- ─── KG Year 1 ─── -->
+      <div class="grade-card" style="animation-delay:0.00s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">روضة — السنة الأولى</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2019 – 2020</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>4 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>ممتاز</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>103 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>17.8 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <!-- event 1 -->
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-trophy-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B">تكريم</div>
+                <h6>طفل الشهر</h6>
+                <p>اختاره المعلمون لأسلوبه الرائع.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">28/12/2019</span></span>
+                <!-- ✏️ صورتا الحدث — غيّر المسارات -->
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/1.jfif','طفل الشهر')">
+                    <img src="../images/childhood/1.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/2.jfif','طفل الشهر')">
+                    <img src="../images/childhood/2.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- event 2 -->
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#8B5CF6"><i class="bi bi-balloon-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#8B5CF61A;color:#8B5CF6">حفلة</div>
+                <h6>حفل عيد الميلاد الرابع</h6>
+                <p>احتفل أصدقاؤه بعيد ميلاده.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">15/03/2019</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/3.3.jfif','حفل عيد الميلاد الرابع')">
+                    <img src="../images/childhood/3.3.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/4.4.jfif','حفل عيد الميلاد الرابع')">
+                    <img src="../images/childhood/4.4.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── KG Year 2 ─── -->
+      <div class="grade-card" style="animation-delay:0.07s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">روضة — السنة الثانية</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2020 – 2021</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>5 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>ممتاز</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>110 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>20.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-star-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6>المركز الثاني في الرسم</h6>
+                <p>فاز بالمركز الثاني على مستوى الروضات.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">20/04/2021</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/5.5.jfif','المركز الثاني في الرسم')">
+                    <img src="../images/childhood/5.5.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/6.6.jfif','المركز الثاني في الرسم')">
+                    <img src="../images/childhood/6.6.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#8B5CF6"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#8B5CF61A;color:#8B5CF6">تخرج</div>
+                <h6>حفل تخرج الروضة</h6>
+                <p>تسلّم شهادة إتمام مرحلة الروضة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">15/06/2021</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/5.jpg','حفل تخرج الروضة')">
+                    <img src="../images/childhood/5.jpg" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/6.jfif','حفل تخرج الروضة')">
+                    <img src="../images/childhood/6.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /pane-kg -->
+
+  <!-- ============================================================ PRIMARY -->
+  <div class="epane" id="pane-prim">
+    <div class="stage-hdr">
+      <span class="sh-em">📖</span>
+      <div>
+        <h3>الابتدائية</h3>
+        <div class="sh-school">مدرسة النور الابتدائية</div>
+        <div class="sh-yrs">2021 – 2027</div>
+      </div>
+    </div>
+    <div class="grade-cards-list">
+
+      <!-- ─── Grade 1 ─── -->
+      <div class="grade-card" style="animation-delay:0.00s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف الأول الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2021 – 2022</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>6 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>94%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>116 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>22.5 كغ</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-book-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6>قراءة أول كتاب كامل</h6>
+                <p>أتم قراءة كتاب وأهدى نسخة للمكتبة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">10/03/2022</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/7.jfif','قراءة أول كتاب كامل')">
+                    <img src="../images/childhood/7.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/8.jfif','قراءة أول كتاب كامل')">
+                    <img src="../images/childhood/8.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Grade 2 ─── -->
+      <div class="grade-card" style="animation-delay:0.07s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف الثاني الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2022 – 2023</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>7 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>96%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>122 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>25.2 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-trophy-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B">تكريم</div>
+                <h6>المركز الأول في العلوم</h6>
+                <p>تفوق على 320 طالب.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">12/06/2023</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/9.jfif','المركز الأول في العلوم')">
+                    <img src="../images/childhood/9.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/11.jfif','المركز الأول في العلوم')">
+                    <img src="../images/childhood/11.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#10B981"><i class="bi bi-heart-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#10B9811A;color:#10B981">تطوع</div>
+                <h6>يوم التطوع المدرسي</h6>
+                <p>شارك في تنظيف المدرسة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">05/11/2022</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/12.jfif','يوم التطوع المدرسي')">
+                    <img src="../images/childhood/12.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/13.jfif','يوم التطوع المدرسي')">
+                    <img src="../images/childhood/13.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Grade 3 ─── -->
+      <div class="grade-card" style="animation-delay:0.14s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف الثالث الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2023 – 2024</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>8 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>98%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>130 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>29.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-cpu-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6>دورة البرمجة Scratch</h6>
+                <p>أتم الدورة بتقدير ممتاز.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">20/09/2023</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/1.jfif','دورة البرمجة Scratch')">
+                    <img src="../images/childhood/1.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/2.jfif','دورة البرمجة Scratch')">
+                    <img src="../images/childhood/2.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#F59E0B"><i class="bi bi-award-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#F59E0B1A;color:#F59E0B">تكريم</div>
+                <h6>طالب متميز — المنطقة</h6>
+                <p>من أفضل 10 طلاب في المنطقة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">08/05/2024</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/3.3.jfif','طالب متميز')">
+                    <img src="../images/childhood/3.3.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/4.4.jfif','طالب متميز')">
+                    <img src="../images/childhood/4.4.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Grade 4 ─── -->
+      <div class="grade-card" style="animation-delay:0.21s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف الرابع الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2024 – 2025</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>9 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>97%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>138 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>34.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-robot"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6>مشروع الروبوتيك</h6>
+                <p>بنى روبوت صغير في معرض العلوم.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">14/02/2025</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/5.5.jfif','مشروع الروبوتيك')">
+                    <img src="../images/childhood/5.5.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/6.6.jfif','مشروع الروبوتيك')">
+                    <img src="../images/childhood/6.6.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Grade 5 ─── -->
+      <div class="grade-card" style="animation-delay:0.28s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف الخامس الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2025 – 2026</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>10 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>97%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>138 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>34.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-robot"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">نجاح</div>
+                <h6>مشروع الروبوتيك</h6>
+                <p>بنى روبوت صغير في معرض العلوم.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">14/02/2025</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/7.jfif','مشروع الروبوتيك — الخامس')">
+                    <img src="../images/childhood/7.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/8.jfif','مشروع الروبوتيك — الخامس')">
+                    <img src="../images/childhood/8.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Grade 6 ─── -->
+      <div class="grade-card" style="animation-delay:0.35s">
+        <div class="gc-header" onclick="toggleCard(this)">
+          <div class="gc-h-left"><div class="gc-dot"></div><div>
+            <div class="gc-name">الصف السادس الابتدائي</div>
+            <div class="gc-meta">
+              <span><i class="bi bi-calendar3"></i><span class="gc-meta-num">2026 – 2027</span></span>
+              <span><i class="bi bi-person-badge-fill"></i>11 سنوات</span>
+            </div>
+          </div></div>
+          <div class="gc-right">
+            <div class="gc-grade-box" style="background:#22C55E1A;border-color:#22C55E;color:#22C55E">
+              <span>97%</span><small>التقدير</small>
+            </div>
+            <i class="bi bi-chevron-down gc-chevron"></i>
+          </div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-stats-bar">
+            <div class="gc-stat"><i class="bi bi-rulers"></i>الطول: <strong>150 سم</strong></div>
+            <div class="gc-stat"><i class="bi bi-activity"></i>الوزن: <strong>42.0 كغ</strong></div>
+          </div>
+          <div class="events-list">
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#8B5CF6"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#8B5CF61A;color:#8B5CF6">تخرج</div>
+                <h6>حفل تخرج الابتدائية</h6>
+                <p>تخرج بالمركز الأول على المدرسة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">15/06/2027</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/9.jfif','حفل تخرج الابتدائية')">
+                    <img src="../images/childhood/9.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/11.jfif','حفل تخرج الابتدائية')">
+                    <img src="../images/childhood/11.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ev-row">
+              <div class="ev-dot" style="background:#3B82F6"><i class="bi bi-award-fill"></i></div>
+              <div class="ev-info">
+                <div class="ev-badge" style="background:#3B82F61A;color:#3B82F6">تميز</div>
+                <h6>بطولة الخطابة المدرسية</h6>
+                <p>فاز بالمركز الأول في مسابقة الخطابة.</p>
+                <span class="ev-date"><i class="bi bi-calendar3"></i><span class="ev-date-text">20/04/2027</span></span>
+                <div class="ev-photos">
+                  <div class="ev-photo" onclick="openLB('../images/childhood/12.jfif','بطولة الخطابة')">
+                    <img src="../images/childhood/12.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                  <div class="ev-photo" onclick="openLB('../images/childhood/13.jfif','بطولة الخطابة')">
+                    <img src="../images/childhood/13.jfif" onerror="this.style.display='none'">
+                    <div class="ev-photo-placeholder">📷</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /pane-prim -->
+</div>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lb-overlay" id="lbOverlay" onclick="lbBgClick(event)">
+  <div class="lb-box">
+    <button class="lb-close" onclick="closeLB()"><i class="bi bi-x"></i></button>
+    <div class="lb-img-wrap" id="lbImgWrap"></div>
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span>الطفولة</a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span>المراهقة</a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span>الشباب</a>
+    <div class="mobile-stage-label">الصفحات</div>
+    <a class="mobile-nav-link" href="profile.html"><i class="bi bi-house-fill"></i>الرئيسية</a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i>الولادة</a>
+    <a class="mobile-nav-link" href="height_childhood.html"><i class="bi bi-rulers"></i>الطول</a>
+    <a class="mobile-nav-link" href="certs_childhood.html"><i class="bi bi-award-fill"></i>الشهادات</a>
+    <a class="mobile-nav-link active" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i>التعليم</a>
+    <a class="mobile-nav-link" href="timeline_childhood.html"><i class="bi bi-calendar3"></i>السنوات</a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  // today date
+  const td = document.getElementById('todayDate');
+  if (td) td.textContent = new Date().toLocaleDateString('ar-SA', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric', numberingSystem:'latn'
+  });
+
+  // ── day name next to every date ───────────────────────────────
+  function parseDate(str) {
+    const [d, m, y] = str.split('/');
+    return new Date(+y, +m - 1, +d);
+  }
+  function getDayName(str) {
+    return parseDate(str).toLocaleDateString('ar-SA', { weekday:'long', numberingSystem:'latn' });
+  }
+
+  document.querySelectorAll('.ev-date-text').forEach(el => {
+    const dateStr = el.textContent.trim();
+    if (!/\d{2}\/\d{2}\/\d{4}/.test(dateStr)) return;
+    el.innerHTML = `${dateStr} <span style="opacity:.65;font-size:10.5px;font-weight:700;font-family:'Tajawal',sans-serif">— ${getDayName(dateStr)}</span>`;
+  });
+
+  // ── accordion ────────────────────────────────────────────────
+  function showPane(id, btn) {
+    document.querySelectorAll('.epane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.en-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('pane-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleCard(header) {
+    const card = header.closest('.grade-card');
+    const isOpen = card.classList.contains('open');
+    card.closest('.grade-cards-list').querySelectorAll('.grade-card.open').forEach(c => {
+      c.classList.remove('open');
+      c.querySelector('.gc-body').style.maxHeight = '0';
+      c.querySelector('.gc-chevron').style.transform = '';
+    });
+    if (!isOpen) {
+      card.classList.add('open');
+      const body = card.querySelector('.gc-body');
+      body.style.maxHeight = body.scrollHeight + 'px';
+      card.querySelector('.gc-chevron').style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // ── lightbox ─────────────────────────────────────────────────
+  function openLB(src, caption) {
+    const wrap = document.getElementById('lbImgWrap');
+    wrap.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = src; img.alt = caption;
+    img.onerror = function() { this.outerHTML = '<div style="font-size:60px;opacity:.2;padding:40px">📷</div>'; };
+    wrap.appendChild(img);
+    document.getElementById('lbCaption').innerHTML = `<i class="bi bi-image"></i> ${caption}`;
+    document.getElementById('lbOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLB() {
+    document.getElementById('lbOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function lbBgClick(e) {
+    if (e.target === document.getElementById('lbOverlay')) closeLB();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+</script>
+</body>
+</html>

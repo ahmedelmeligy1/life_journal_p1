@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>سجل الحياة — الطول — الطفولة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" id="bsLink">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/profile.css">
+<style>
+.height-body{padding:24px}
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 22px 14px;box-shadow:var(--shadow);margin-bottom:24px;overflow-x:auto}
+.chart-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;display:flex;align-items:center;gap:7px}
+.chart-title i{color:var(--sc)}
+
+/* ── الجراف ── */
+.hchart-outer{display:flex;align-items:flex-end;gap:6px;height:240px;min-width:max-content;padding:0 2px}
+.hc-year-col{display:flex;flex-direction:column;align-items:center;gap:0;min-width:48px;flex:1}
+.hc-bars-row{display:flex;align-items:flex-end;gap:2px;height:210px;width:100%;justify-content:center}
+.hc-bar2{flex:1;border-radius:7px 7px 0 0;min-width:10px;max-width:38px;
+  display:flex;align-items:flex-start;justify-content:center;padding-top:5px;
+  cursor:pointer;position:relative;transition:filter .2s,transform .15s;
+  animation:barGrow2 .65s ease both;transform-origin:bottom}
+.hc-bar2:hover{filter:brightness(1.2);transform:scaleY(1.04);z-index:10}
+.hc-bar2>span{font-size:9px;font-weight:800;color:#fff;writing-mode:vertical-lr;
+  transform:rotate(180deg);white-space:nowrap;line-height:1;pointer-events:none;font-family:'Poppins',sans-serif}
+.hc-bar2 .hc-tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:#1a1a2e;color:#fff;border-radius:12px;padding:9px 13px;
+  font-family:'Tajawal',sans-serif;font-size:12.5px;white-space:nowrap;z-index:9999;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);direction:rtl;text-align:right;line-height:1.9;pointer-events:none}
+.hc-bar2 .hc-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:#1a1a2e}
+.hc-bar2:hover .hc-tip{display:block}
+.hc-year-lbl{margin-top:5px;font-size:9.5px;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap}
+.hc-year-num{font-size:9px;font-weight:600;text-align:center;color:var(--muted);opacity:.7;font-family:'Poppins',sans-serif}
+.hc-mcount{font-size:8.5px;font-weight:700;border-radius:20px;padding:0 5px;margin-top:1px;opacity:.75;font-family:'Poppins',sans-serif}
+@keyframes barGrow2{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ── كروت ── */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.hg-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;
+  box-shadow:var(--shadow);transition:var(--ease);animation:fadeUp .4s ease both}
+.hg-card:hover{box-shadow:var(--shadow-h);transform:translateY(-4px)}
+.hg-top{padding:9px 13px;display:flex;justify-content:space-between;align-items:center}
+.hg-yr{font-size:12px;font-weight:800;font-family:'Poppins',sans-serif}
+.hg-diff{font-size:10.5px;font-weight:700;color:#22C55E;background:#22C55E1A;padding:2px 7px;border-radius:20px;font-family:'Poppins',sans-serif}
+
+/* ── صورة ── */
+.hg-thumb{min-height:80px;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;cursor:pointer}
+.hg-thumb img{position:absolute;inset:0;width:100%;height:80px;object-fit:cover;transition:transform .3s,opacity .2s}
+.hg-thumb:hover img{transform:scale(1.07);opacity:.85}
+.hg-thumb-ov{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;
+  justify-content:center;opacity:0;transition:opacity .2s;z-index:2}
+.hg-thumb:hover .hg-thumb-ov{opacity:1}
+.hg-thumb-ov i{font-size:22px;color:#fff}
+
+/* ── شريط المعلومات تحت الصورة ── */
+.hg-photo-info{display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.hg-pi-item{display:flex;align-items:center;gap:5px;padding:5px 9px;font-size:10px;font-weight:700;
+  border-left:1px solid var(--border)}
+.hg-pi-item:nth-child(odd){border-left:none}
+.hg-pi-item i{font-size:10px;flex-shrink:0}
+.hg-pi-item span{color:var(--text)}
+
+/* ── body ── */
+.hg-body{padding:9px 13px 14px}
+.hg-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.hg-row span{font-size:11px;color:var(--muted)}
+.hg-row strong{font-size:12.5px;font-weight:800;font-family:'Poppins',sans-serif}
+
+/* ── بارات القياسات داخل الكارت ── */
+.hg-meas-section{padding:4px 0 4px}
+.hg-meas-title{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.hg-meas-title i{color:var(--sc);font-size:11px}
+.hg-meas-bars-wrap{display:flex;align-items:flex-end;gap:4px;height:60px}
+.hg-meas-col2{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:2px}
+.hg-meas-bar2{width:100%;border-radius:4px 4px 0 0;min-height:8px;
+  animation:barGrow .6s ease both;position:relative;cursor:default}
+.hg-meas-bar2::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;
+  transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;font-size:10px;font-weight:700;
+  white-space:nowrap;padding:3px 7px;border-radius:7px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.hg-meas-bar2:hover::after{opacity:1}
+.hg-meas-val2{font-size:9px;font-weight:800;text-align:center;font-family:'Poppins',sans-serif}
+.hg-meas-lbl2{font-size:7.5px;font-weight:700;color:var(--muted);text-align:center;line-height:1.2}
+@keyframes barGrow{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+
+.hg-bar-mini{height:4px;background:var(--bg);border-radius:10px;margin-top:8px;overflow:hidden}
+.hg-fill{height:100%;border-radius:10px}
+.today-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.08);color:inherit;
+  border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-top:6px}
+
+@media(max-width:576px){
+  .height-body{padding:16px}
+  .hgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+
+/* ══ LIGHTBOX ══ */
+.lb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;
+  align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px)}
+.lb-overlay.open{display:flex;animation:lbFadeIn .22s ease}
+@keyframes lbFadeIn{from{opacity:0}to{opacity:1}}
+.lb-box{background:var(--surface,#fff);border-radius:26px;overflow:hidden;
+  max-width:390px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.55);
+  animation:lbUp .28s ease;position:relative}
+@keyframes lbUp{from{transform:translateY(28px);opacity:0}to{transform:translateY(0);opacity:1}}
+.lb-img-wrap{width:100%;height:260px;background:#111;display:flex;align-items:center;
+  justify-content:center;overflow:hidden;position:relative}
+.lb-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.lb-placeholder{font-size:70px;opacity:.2}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;
+  background:rgba(0,0,0,.5);border:none;border-radius:50%;color:#fff;font-size:16px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .2s}
+.lb-arrow:hover{background:rgba(0,0,0,.8)}
+.lb-arrow.prev{right:10px}
+.lb-arrow.next{left:10px}
+.lb-arrow:disabled{opacity:.25;cursor:default}
+.lb-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+.lb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:background .2s}
+.lb-dot.active{background:#fff}
+.lb-close{position:absolute;top:11px;left:11px;width:34px;height:34px;
+  background:rgba(0,0,0,.5);border:none;border-radius:50%;color:#fff;font-size:18px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .2s}
+.lb-close:hover{background:rgba(239,68,68,.7)}
+.lb-info{padding:18px 20px 22px;direction:rtl}
+.lb-header{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.lb-color-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.lb-header-text{font-size:15px;font-weight:800}
+.lb-header-sub{font-size:11px;opacity:.5;font-family:'Poppins',sans-serif;margin-right:auto}
+.lb-rows{display:flex;flex-direction:column;gap:7px}
+.lb-row{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 13px;background:var(--bg,#f5f5f5);border-radius:11px}
+.lb-row-lbl{font-size:12px;color:var(--muted,#888);display:flex;align-items:center;gap:7px}
+.lb-row-lbl i{font-size:14px}
+.lb-row-val{font-size:13px;font-weight:800;font-family:'Poppins',sans-serif}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <button class="tb-menu-btn" onclick="openMobileMenu()"><i class="bi bi-list"></i></button>
+  <div class="tb-stages">
+    <a class="tb-stage-pill" href="profile.html">🌱 <span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="tb-stage-pill" href="profile_teen.html">🌿 <span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="tb-stage-pill" href="profile_adult.html">🌳 <span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><i class="bi bi-journal-heart" style="color:#fff;font-size:16px"></i></div>
+    <div><span class="tb-brand-name" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><span class="tb-brand-en">Life Journal</span></div>
+  </div>
+  <div class="tb-actions">
+    <a href="../index.html" class="tb-logout-btn"><i class="bi bi-box-arrow-right"></i><span class="logout-label" data-ar="خروج" data-en="Logout">خروج</span></a>
+    <button class="color-icon-btn" onclick="openThemeModal()"><i class="bi bi-palette2"></i><span class="cib-label" data-ar="اللون" data-en="Color">اللون</span><span class="cib-dot"></span></button>
+    <button class="lang-btn" onclick="toggleLang()"><span>🌐</span><span id="langLabel">EN</span></button>
+  </div>
+</nav>
+<div class="page-tabs">
+  <a class="page-tab" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en=" Home">الرئيسية</span></a>
+  <a class="page-tab" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en=" Birth">الولادة</span></a>
+  <a class="page-tab active" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en=" Height">الطول</span></a>
+  <a class="page-tab" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en=" Certificates">الشهادات</span></a>
+  <a class="page-tab" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en=" Education">التعليم</span></a>
+  <a class="page-tab" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+</div>
+
+<div class="sec-hero" style="--hf:#f0fff6;--ha:#27ae60">
+  <div class="hero-orb"></div>
+  <h2><span data-ar="الطول والوزن" data-en="Height & Weight">الطول والوزن</span> <span class="sec-he"></span></h2>
+  <p data-ar="رحلة النمو عبر السنوات" data-en="Growth journey through the years">رحلة النمو عبر السنوات</p>
+  <div class="today-badge"><i class="bi bi-calendar-check"></i><span id="todayDate"></span></div>
+</div>
+
+<div class="height-body">
+  <div class="chart-wrap">
+    <div class="chart-title"><i class="bi bi-bar-chart-fill"></i>
+      <span data-ar="مخطط نمو الطول — كل شريط = قياس واحد (سم)" data-en="Height Growth — each bar = one measurement (cm)">مخطط نمو الطول — كل شريط = قياس واحد (سم)</span>
+    </div>
+    <div class="hchart-outer" id="hchartOuter"></div>
+  </div>
+  <div class="hgrid" id="hgridEl"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lbOverlay" onclick="lbBgClick(event)">
+  <div class="lb-box" id="lbBox">
+    <button class="lb-close" onclick="closeLB()"><i class="bi bi-x"></i></button>
+    <div class="lb-img-wrap" id="lbImgWrap">
+      <button class="lb-arrow prev" id="lbPrev" onclick="lbNav(-1)"><i class="bi bi-chevron-right"></i></button>
+      <button class="lb-arrow next" id="lbNext" onclick="lbNav(1)"><i class="bi bi-chevron-left"></i></button>
+      <div class="lb-dots" id="lbDots"></div>
+    </div>
+    <div class="lb-info">
+      <div class="lb-header">
+        <span class="lb-color-dot" id="lbColorDot"></span>
+        <span class="lb-header-text" id="lbHeaderText"></span>
+        <span class="lb-header-sub" id="lbHeaderSub"></span>
+      </div>
+      <div class="lb-rows" id="lbRows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><span style="font-weight:800;font-size:15px" data-ar="سجل الحياة" data-en="Life Journal">سجل الحياة</span><button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="bi bi-x"></i></button></div>
+    <div class="mobile-stage-label" data-ar="المراحل" data-en="Stages">المراحل</div>
+    <a class="mobile-nav-link" href="profile.html"><span>🌱</span><span data-ar="الطفولة" data-en="Childhood">الطفولة</span></a>
+    <a class="mobile-nav-link" href="profile_teen.html"><span>🌿</span><span data-ar="المراهقة" data-en="Adolescence">المراهقة</span></a>
+    <a class="mobile-nav-link" href="profile_adult.html"><span>🌳</span><span data-ar="الشباب" data-en="Adulthood">الشباب</span></a>
+    <div class="mobile-stage-label" data-ar="الصفحات" data-en="Pages">الصفحات</div>
+    <a class="mobile-nav-link" href="profile.html" data-page="home"><i class="bi bi-house-fill"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a class="mobile-nav-link" href="birth.html"><i class="bi bi-heart-pulse-fill"></i><span data-ar="الولادة" data-en="Birth">الولادة</span></a>
+    <a class="mobile-nav-link active" href="height_childhood.html"><i class="bi bi-rulers"></i><span data-ar="الطول" data-en="Height">الطول</span></a>
+    <a class="mobile-nav-link" href="certs_childhood.html"><i class="bi bi-award-fill"></i><span data-ar="الشهادات" data-en="Certificates">الشهادات</span></a>
+    <a class="mobile-nav-link" href="edu_childhood.html"><i class="bi bi-mortarboard-fill"></i><span data-ar="التعليم" data-en="Education">التعليم</span></a>
+    <a class="mobile-nav-link" href="timeline_childhood.html"><i class="bi bi-calendar3"></i><span data-ar="السنوات" data-en="Timeline">السنوات</span></a>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+// ================================================================
+//  ✏️  بيانات القياسات — عدّل هنا فقط
+//  date بصيغة DD/MM/YYYY
+// ================================================================
+const GROWTH_DATA = [
+  {
+    year:'2015', label:'الولادة', labelEn:'Birth',
+    color:'#60A5FA', img:'../images/childhood/5.5.jfif',
+    measures:[
+      {date:'15/03/2015', height:51,  weight:3.8}
+    ]
+  },
+  {
+    year:'2016', label:'سنة 1', labelEn:'Year 1',
+    color:'#34D399', img:'../images/childhood/2.jfif',
+    measures:[
+      {date:'20/04/2016', height:68,  weight:8.1},
+      {date:'15/09/2016', height:75,  weight:10.2}
+    ]
+  },
+  {
+    year:'2017', label:'سنة 2', labelEn:'Year 2',
+    color:'#FBBF24', img:'../images/childhood/3.3.jfif',
+    measures:[
+      {date:'05/01/2017', height:80,  weight:11.5},
+      {date:'15/03/2017', height:84,  weight:12.0},
+      {date:'10/09/2017', height:87,  weight:13.0}
+    ]
+  },
+  {
+    year:'2018', label:'سنة 3', labelEn:'Year 3',
+    color:'#F87171', img:'../images/childhood/3.3.jfif',
+    measures:[
+      {date:'10/09/2018', height:96, weight:15.5}
+    ]
+  },
+  {
+    year:'2019', label:'سنة 4', labelEn:'Year 4',
+    color:'#A78BFA', img:'../images/childhood/4.4.jfif',
+    measures:[
+      {date:'12/06/2019', height:103, weight:17.8}
+    ]
+  },
+  {
+    year:'2020', label:'سنة 5', labelEn:'Year 5',
+    color:'#FB923C', img:'../images/childhood/5.5.jfif',
+    measures:[
+      {date:'20/09/2020', height:110, weight:20.0}
+    ]
+  },
+  {
+    year:'2021', label:'سنة 6', labelEn:'Year 6',
+    color:'#4ADE80', img:'../images/childhood/6.6.jfif',
+    measures:[
+      {date:'15/03/2021', height:113, weight:21.2},
+      {date:'10/11/2021', height:116, weight:22.5}
+    ]
+  },
+  {
+    year:'2022', label:'سنة 7', labelEn:'Year 7',
+    color:'#38BDF8', img:'../images/childhood/3.3.jfif',
+    measures:[
+      {date:'03/03/2022', height:122, weight:25.2}
+    ]
+  },
+  {
+    year:'2023', label:'سنة 8', labelEn:'Year 8',
+    color:'#E879F9', img:'../images/childhood/4.4.jfif',
+    measures:[
+      {date:'12/06/2023', height:126, weight:27.0},
+      {date:'20/09/2023', height:130, weight:29.0}
+    ]
+  },
+  {
+    year:'2024', label:'سنة 9', labelEn:'Year 9',
+    color:'#E8630A', img:'../images/childhood/5.5.jfif',
+    measures:[
+      {date:'05/02/2024', height:134, weight:31.0},
+      {date:'15/03/2024', height:136, weight:32.5},
+      {date:'10/09/2024', height:138, weight:34.0}
+    ]
+  }
+];
+
+// ================================================================
+//  أسماء الشهور
+// ================================================================
+var MONTH_NAMES = ['','يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                   'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+function parseDate(str) {
+  var p = str.split('/'); return new Date(+p[2], +p[1]-1, +p[0]);
+}
+function getDayName(str) {
+  var days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  return days[parseDate(str).getDay()];
+}
+function getMonthName(str) {
+  return MONTH_NAMES[+str.split('/')[1]];
+}
+function getAge(dateStr) {
+  var birth = parseDate(GROWTH_DATA[0].measures[0].date);
+  var cur   = parseDate(dateStr);
+  var yrs = cur.getFullYear() - birth.getFullYear();
+  var mos = cur.getMonth()    - birth.getMonth();
+  if (mos < 0) { yrs--; mos += 12; }
+  if (yrs === 0) return mos + ' شهر';
+  if (mos === 0) return yrs + ' سنة';
+  return yrs + ' سنة و' + mos + ' شهر';
+}
+
+// ================================================================
+//  بناء الجراف والكارتات
+// ================================================================
+var chartMax = Math.max.apply(null, GROWTH_DATA.map(function(y){
+  return Math.max.apply(null, y.measures.map(function(m){ return m.height; }));
+}));
+
+var chartEl = document.getElementById('hchartOuter');
+var gridEl  = document.getElementById('hgridEl');
+
+GROWTH_DATA.forEach(function(yr, yi) {
+  var lastM = yr.measures[yr.measures.length - 1];
+
+  // ── CHART COLUMN ──
+  var col = document.createElement('div');
+  col.className = 'hc-year-col';
+  var barsRow = document.createElement('div');
+  barsRow.className = 'hc-bars-row';
+
+  yr.measures.forEach(function(m, mi) {
+    var pct   = Math.max(8, Math.round((m.height / chartMax) * 96));
+    var alpha = yr.measures.length > 1
+      ? 0.55 + (mi / (yr.measures.length - 1)) * 0.45 : 1;
+    var bar = document.createElement('div');
+    bar.className = 'hc-bar2';
+    bar.style.cssText = 'height:'+pct+'%;background:'+yr.color+';opacity:'+alpha+
+      ';animation-delay:'+(yi*0.06+mi*0.03)+'s';
+    bar.innerHTML = '<span>'+m.height+'</span>' +
+      '<div class="hc-tip">📅 '+m.date+'<br>📏 <strong>'+m.height+' سم</strong><br>⚖️ '+m.weight+' كغ</div>';
+    barsRow.appendChild(bar);
+  });
+
+  var lbl = document.createElement('div');
+  lbl.className = 'hc-year-lbl';
+  lbl.textContent = yr.label;
+
+  var num = document.createElement('div');
+  num.className = 'hc-year-num';
+  num.textContent = yr.year;
+
+  col.appendChild(barsRow);
+  col.appendChild(lbl);
+  col.appendChild(num);
+
+  if (yr.measures.length > 1) {
+    var badge = document.createElement('div');
+    badge.className = 'hc-mcount';
+    badge.style.color = yr.color;
+    badge.style.background = yr.color + '1A';
+    badge.textContent = yr.measures.length + '×';
+    col.appendChild(badge);
+  }
+  chartEl.appendChild(col);
+
+  // ── CARD ──
+  var prevYr = yi > 0 ? GROWTH_DATA[yi-1] : null;
+  var prevH  = prevYr ? prevYr.measures[prevYr.measures.length-1].height : null;
+  var diff   = prevH !== null ? lastM.height - prevH : null;
+  var barPct = Math.round((lastM.height / chartMax) * 70);
+
+  // شريط المعلومات
+  var infoStrip = '<div class="hg-photo-info">' +
+    '<div class="hg-pi-item"><i class="bi bi-calendar3" style="color:'+yr.color+'"></i><span>'+getMonthName(lastM.date)+' '+lastM.date.split('/')[2]+'</span></div>' +
+    '<div class="hg-pi-item"><i class="bi bi-rulers" style="color:'+yr.color+'"></i><span>'+lastM.height+' سم</span></div>' +
+    '<div class="hg-pi-item"><i class="bi bi-person-fill" style="color:'+yr.color+'"></i><span>'+yr.label+'</span></div>' +
+    '<div class="hg-pi-item"><i class="bi bi-graph-up" style="color:'+yr.color+'"></i><span>'+lastM.weight+' كغ</span></div>' +
+    '</div>';
+
+  // بارات القياسات
+  var measMax   = Math.max.apply(null, yr.measures.map(function(m){ return m.height; }));
+  var measMin   = Math.min.apply(null, yr.measures.map(function(m){ return m.height; }));
+  var measRange = measMax - measMin || 1;
+
+  var barsHtml = yr.measures.map(function(m, mi) {
+    var pct   = Math.max(20, Math.round(25 + ((m.height - measMin) / measRange) * 70));
+    var alpha = yr.measures.length > 1
+      ? (0.55 + (mi / (yr.measures.length - 1)) * 0.45).toFixed(2) : '1';
+    var mnLbl = MONTH_NAMES[+m.date.split('/')[1]] || '';
+    return '<div class="hg-meas-col2">' +
+      '<div class="hg-meas-val2" style="color:'+yr.color+'">'+m.height+'</div>' +
+      '<div class="hg-meas-bar2" style="height:'+pct+'%;background:'+yr.color+';opacity:'+alpha+'" data-tip="'+m.date+' — '+m.height+' سم"></div>' +
+      '<div class="hg-meas-lbl2">'+mnLbl+'</div>' +
+      '</div>';
+  }).join('');
+
+  var miniBarSection = '<div class="hg-meas-section">' +
+    '<div class="hg-meas-title"><i class="bi bi-rulers"></i><span>'+yr.measures.length+
+    (yr.measures.length > 1 ? ' قياسات' : ' قياس')+'</span></div>' +
+    '<div class="hg-meas-bars-wrap">'+barsHtml+'</div>' +
+    '</div>';
+
+  var diffBadge = diff !== null
+    ? '<span class="hg-diff">+'+diff+' <span data-ar="سم" data-en="cm">سم</span></span>' : '';
+
+  var card = document.createElement('div');
+  card.className = 'hg-card';
+  card.style.animationDelay = (yi * 0.04) + 's';
+  card.innerHTML =
+    '<div class="hg-top" style="background:'+yr.color+'1A">' +
+      '<span class="hg-yr" style="color:'+yr.color+'">'+yr.year+'</span>' +
+      diffBadge +
+    '</div>' +
+    '<div class="hg-thumb" style="background:linear-gradient(135deg,'+yr.color+'44,'+yr.color+'18)" onclick="openLB('+yi+','+(yr.measures.length-1)+')">' +
+      '<img src="'+yr.img+'" alt="'+yr.label+'" onerror="this.style.display=\'none\'">' +
+      '<div class="hg-thumb-ov"><i class="bi bi-zoom-in"></i></div>' +
+    '</div>' +
+    infoStrip +
+    '<div class="hg-body">' +
+      '<div class="hg-row"><span>'+yr.label+'</span></div>' +
+      miniBarSection +
+      '<div class="hg-bar-mini"><div class="hg-fill" style="width:'+barPct+'%;background:'+yr.color+'"></div></div>' +
+    '</div>';
+
+  gridEl.appendChild(card);
+});
+
+// Today date
+var td = document.getElementById('todayDate');
+if (td) td.textContent = new Date().toLocaleDateString('ar-SA',{
+  weekday:'long', year:'numeric', month:'long', day:'numeric', numberingSystem:'latn'
+});
+
+// ================================================================
+//  LIGHTBOX
+// ================================================================
+var lbYi = 0, lbMi = 0;
+
+function renderLB() {
+  var yr = GROWTH_DATA[lbYi];
+  var m  = yr.measures[lbMi];
+
+  // image
+  var wrap = document.getElementById('lbImgWrap');
+  var oldEl = wrap.querySelector('img, .lb-placeholder');
+  if (oldEl) oldEl.remove();
+  var img = document.createElement('img');
+  img.src = yr.img; img.alt = yr.label;
+  img.onerror = function(){ this.outerHTML = '<div class="lb-placeholder">📷</div>'; };
+  wrap.insertBefore(img, wrap.firstChild);
+
+  // dots
+  var dotsEl = document.getElementById('lbDots');
+  dotsEl.innerHTML = '';
+  if (yr.measures.length > 1) {
+    yr.measures.forEach(function(_, i) {
+      var dot = document.createElement('div');
+      dot.className = 'lb-dot' + (i === lbMi ? ' active' : '');
+      dot.style.background = i === lbMi ? yr.color : 'rgba(255,255,255,.35)';
+      dot.onclick = function(e){ e.stopPropagation(); lbMi = i; renderLB(); };
+      dotsEl.appendChild(dot);
+    });
+  }
+
+  // arrows
+  document.getElementById('lbPrev').disabled = (lbMi === yr.measures.length - 1);
+  document.getElementById('lbNext').disabled = (lbMi === 0);
+
+  // header
+  document.getElementById('lbColorDot').style.background = yr.color;
+  document.getElementById('lbHeaderText').textContent    = yr.label;
+  document.getElementById('lbHeaderText').style.color    = yr.color;
+  document.getElementById('lbHeaderSub').textContent     = yr.year;
+
+  // rows
+  document.getElementById('lbRows').innerHTML =
+    '<div class="lb-row">' +
+      '<span class="lb-row-lbl"><i class="bi bi-calendar3" style="color:'+yr.color+'"></i>التاريخ</span>' +
+      '<span class="lb-row-val">'+m.date+'</span>' +
+    '</div>' +
+    '<div class="lb-row">' +
+      '<span class="lb-row-lbl"><i class="bi bi-sun" style="color:'+yr.color+'"></i>اليوم</span>' +
+      '<span class="lb-row-val">'+getDayName(m.date)+'</span>' +
+    '</div>' +
+    '<div class="lb-row">' +
+      '<span class="lb-row-lbl"><i class="bi bi-hourglass-split" style="color:'+yr.color+'"></i>العمر</span>' +
+      '<span class="lb-row-val">'+getAge(m.date)+'</span>' +
+    '</div>' +
+    '<div class="lb-row">' +
+      '<span class="lb-row-lbl"><i class="bi bi-rulers" style="color:'+yr.color+'"></i>الطول</span>' +
+      '<span class="lb-row-val" style="color:'+yr.color+'">'+m.height+' سم</span>' +
+    '</div>' +
+    '<div class="lb-row">' +
+      '<span class="lb-row-lbl"><i class="bi bi-activity" style="color:'+yr.color+'"></i>الوزن</span>' +
+      '<span class="lb-row-val">'+m.weight+' كغ</span>' +
+    '</div>';
+}
+
+function openLB(yi, mi) {
+  lbYi = yi; lbMi = mi;
+  renderLB();
+  document.getElementById('lbOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLB() {
+  document.getElementById('lbOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbBgClick(e) {
+  if (e.target === document.getElementById('lbOverlay')) closeLB();
+}
+function lbNav(dir) {
+  var yr = GROWTH_DATA[lbYi];
+  var newMi = lbMi + dir;
+  if (newMi >= 0 && newMi < yr.measures.length) { lbMi = newMi; renderLB(); }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lbOverlay').classList.contains('open')) return;
+  if (e.key === 'Escape')     closeLB();
+  if (e.key === 'ArrowRight') lbNav(-1);
+  if (e.key === 'ArrowLeft')  lbNav(1);
+});
+</script>
+</body>
+</html>

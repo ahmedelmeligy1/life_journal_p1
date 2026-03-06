@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>سجل الحياة — تسجيل الدخول</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;overflow-x:hidden}
+
+/* ══ الخلفية الرئيسية ══ */
+body {
+  background: #03050F;
+  direction: rtl;
+  font-family: 'Tajawal', sans-serif;
+  color: #fff;
+}
+body.ltr { direction: ltr; font-family: 'Poppins', sans-serif; }
+
+/* ══ Canvas للنجوم ══ */
+#starsCanvas {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+/* ══ Aurora / تدرجات ضوئية ══ */
+.aurora {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  overflow: hidden;
+}
+.aurora-1 {
+  position: absolute;
+  width: 900px; height: 600px;
+  top: -200px; right: -200px;
+  background: radial-gradient(ellipse, rgba(99,102,241,.22) 0%, rgba(139,92,246,.12) 40%, transparent 70%);
+  animation: drift1 18s ease-in-out infinite alternate;
+  border-radius: 50%;
+  filter: blur(60px);
+}
+.aurora-2 {
+  position: absolute;
+  width: 700px; height: 500px;
+  bottom: -150px; left: -150px;
+  background: radial-gradient(ellipse, rgba(232,99,10,.18) 0%, rgba(251,146,60,.1) 40%, transparent 70%);
+  animation: drift2 22s ease-in-out infinite alternate;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+.aurora-3 {
+  position: absolute;
+  width: 500px; height: 400px;
+  top: 40%; left: 30%;
+  background: radial-gradient(ellipse, rgba(16,185,129,.1) 0%, transparent 65%);
+  animation: drift3 15s ease-in-out infinite alternate;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+@keyframes drift1 { from{transform:translate(0,0) rotate(0deg)} to{transform:translate(-80px,60px) rotate(15deg)} }
+@keyframes drift2 { from{transform:translate(0,0) rotate(0deg)} to{transform:translate(70px,-50px) rotate(-12deg)} }
+@keyframes drift3 { from{transform:translate(0,0) scale(1)} to{transform:translate(-40px,40px) scale(1.3)} }
+
+/* ══ الشبكة ══ */
+.grid-lines {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* ══ المركز ══ */
+.center {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+
+/* ══ البطاقة الرئيسية ══ */
+.card {
+  width: 100%; max-width: 460px;
+  background: rgba(255,255,255,.045);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 32px;
+  padding: 36px 32px 32px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 40px 100px rgba(0,0,0,.6),
+    0 0 80px rgba(99,102,241,.08);
+  animation: cardReveal .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes cardReveal {
+  from { opacity:0; transform:translateY(40px) scale(.97) }
+  to   { opacity:1; transform:translateY(0) scale(1) }
+}
+
+/* ══ بطاقة الشخص ══ */
+.person-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; text-align: center;
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 22px;
+  padding: 24px 20px 20px;
+  margin-bottom: 28px;
+  position: relative; overflow: hidden;
+  animation: cardReveal .7s .1s cubic-bezier(.22,1,.36,1) both;
+}
+.person-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+}
+
+/* ══ حلقة الصورة ══ */
+.av-ring {
+  position: relative; flex-shrink: 0;
+}
+.av-glow {
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #E8630A, #FFD166, #a855f7, #6366f1, #E8630A);
+  animation: spin 4s linear infinite;
+  opacity: .7;
+  filter: blur(4px);
+}
+@keyframes spin { to { transform: rotate(360deg) } }
+.av-glow-mask {
+  position: absolute; inset: 3px;
+  border-radius: 50%;
+  background: #03050F;
+  z-index: 1;
+}
+.person-av {
+  position: relative; z-index: 2;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,.25);
+  overflow: hidden;
+  background: linear-gradient(135deg, #E8630A, #FFD166);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.person-av img { width:100%; height:100%; object-fit:cover; border-radius:50% }
+
+.person-info { display:flex; flex-direction:column; align-items:center; gap:7px }
+.person-info h3 {
+  font-size: 19px; font-weight: 900; color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,.4);
+}
+.person-stage-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 30px;
+  padding: 5px 14px;
+  font-size: 11.5px; font-weight: 700;
+  color: rgba(255,255,255,.85);
+  backdrop-filter: blur(10px);
+}
+
+/* ══ الشعار ══ */
+.logo {
+  display: flex; align-items: center; gap: 13px;
+  margin-bottom: 6px;
+  animation: cardReveal .7s .15s cubic-bezier(.22,1,.36,1) both;
+}
+.logo-ring {
+  width: 46px; height: 46px; border-radius: 14px;
+  background: linear-gradient(135deg, #E8630A, #FFD166);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 28px rgba(232,99,10,.45), 0 0 0 1px rgba(255,255,255,.1) inset;
+}
+.logo-ring i { font-size: 22px; color: #fff }
+.logo h1 { font-size: 23px; font-weight: 900; color: #fff; line-height: 1.1 }
+.logo h1 span {
+  color: rgba(255,255,255,.35);
+  font-size: 10.5px; font-family: 'Poppins', sans-serif;
+  letter-spacing: .12em; display: block; margin-top: 3px;
+  text-transform: uppercase;
+}
+
+.sub {
+  color: rgba(255,255,255,.4); font-size: 13px;
+  margin-bottom: 26px; line-height: 1.5;
+  animation: cardReveal .7s .2s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* ══ الحقل ══ */
+.lf {
+  margin-bottom: 20px;
+  animation: cardReveal .7s .25s cubic-bezier(.22,1,.36,1) both;
+}
+.lf label {
+  display: flex; align-items: center; gap: 7px;
+  color: rgba(255,255,255,.45); font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;
+}
+
+/* ══ صف الأرقام ══ */
+.code-row {
+  display: flex; align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ci {
+  width: 50px; height: 58px;
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.13);
+  border-radius: 14px;
+  text-align: center;
+  font-family: 'Poppins', 'Tajawal', sans-serif;
+  font-size: 24px; font-weight: 800; color: #fff;
+  outline: none;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  caret-color: transparent;
+}
+.ci:focus {
+  border-color: #E8630A;
+  background: rgba(232,99,10,.12);
+  box-shadow: 0 0 0 3px rgba(232,99,10,.18), 0 8px 24px rgba(232,99,10,.15);
+  transform: translateY(-2px) scale(1.06);
+}
+.ci.filled {
+  border-color: rgba(232,99,10,.5);
+  background: rgba(232,99,10,.08);
+}
+.ci-sep {
+  color: rgba(255,255,255,.2); font-size: 20px;
+  font-weight: 300; margin: 0 2px;
+}
+.fhint {
+  display: block; font-size: 11px;
+  color: rgba(255,255,255,.2); margin-top: 10px; text-align: center;
+}
+
+/* ══ خطأ ══ */
+.err-box {
+  display: none; align-items: center; gap: 9px;
+  background: rgba(239,68,68,.13);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: 12px; padding: 11px 15px;
+  color: #FCA5A5; font-size: 13px; margin-bottom: 16px;
+}
+.err-box.show { display:flex; animation: shake .4s ease }
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+
+/* ══ زر الدخول ══ */
+.login-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, #E8630A 0%, #FF8C38 50%, #FFD166 100%);
+  border: none; border-radius: 16px;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  color: #fff; cursor: pointer;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 8px 28px rgba(232,99,10,.4), 0 0 0 1px rgba(255,255,255,.1) inset;
+  position: relative; overflow: hidden;
+  animation: cardReveal .7s .3s cubic-bezier(.22,1,.36,1) both;
+}
+.login-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.login-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(232,99,10,.55) }
+.login-btn:hover::before { opacity: 1 }
+.login-btn:active { transform: translateY(0) }
+
+/* ══ زر اللغة ══ */
+.lang-float {
+  position: fixed; top: 18px; left: 18px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px; padding: 7px 14px;
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,.65); cursor: pointer;
+  transition: all .3s; z-index: 100;
+  backdrop-filter: blur(16px);
+}
+.lang-float:hover { background:rgba(232,99,10,.3); color:#fff; border-color:rgba(232,99,10,.5) }
+body.ltr .lang-float { left:auto; right:18px }
+
+/* ══ نقاط تقدم الكود ══ */
+.code-progress {
+  display: flex; justify-content: center; gap: 6px; margin-top: 12px;
+}
+.cp-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.cp-dot.active {
+  background: #E8630A;
+  box-shadow: 0 0 8px rgba(232,99,10,.6);
+  transform: scale(1.3);
+}
+
+@media(max-width:480px){
+  .card{padding:28px 18px 24px}
+  .ci{width:44px;height:52px;font-size:20px}
+  .logo h1{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- نجوم متحركة -->
+<canvas id="starsCanvas"></canvas>
+
+<!-- Aurora -->
+<div class="aurora">
+  <div class="aurora-1"></div>
+  <div class="aurora-2"></div>
+  <div class="aurora-3"></div>
+</div>
+
+<!-- شبكة -->
+<div class="grid-lines"></div>
+
+<!-- زر اللغة -->
+<button class="lang-float" id="langFloatBtn" onclick="toggleLangLogin()">EN</button>
+
+<div class="center">
+  <div class="card">
+
+    <!-- بطاقة الشخص -->
+    <div class="person-card">
+      <div class="av-ring">
+        <div class="av-glow"></div>
+        <div class="av-glow-mask"></div>
+        <div class="person-av">
+          <img src="images/childhood/5.5.jfif" alt="avatar"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <i class="bi bi-person-fill" style="font-size:32px;color:#fff;display:none"></i>
+        </div>
+      </div>
+      <div class="person-info">
+        <h3 id="personName">محمد عبدالله</h3>
+        <div class="person-stage-badge">
+          <span id="stageEmoji">🌱</span>
+          <span id="stageLabel">مرحلة الطفولة</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- الشعار -->
+    <div class="logo">
+      <div class="logo-ring"><i class="bi bi-journal-heart"></i></div>
+      <div>
+        <h1>سجل الحياة<span>Life Journal</span></h1>
+      </div>
+    </div>
+
+    <p class="sub" data-ar="أدخل رقمك الشخصي للوصول إلى سجلك" data-en="Enter your personal code to access your journal">
+      أدخل رقمك الشخصي للوصول إلى سجلك
+    </p>
+
+    <!-- خانات الكود -->
+    <div class="lf">
+      <label><i class="bi bi-shield-lock-fill"></i> <span data-ar="رقمك الشخصي (٦ أرقام)" data-en="Personal Code (6 digits)">رقمك الشخصي (٦ أرقام)</span></label>
+      <div class="code-row" id="codeRow">
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+        <span class="ci-sep">·</span>
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+        <input class="ci" type="text" maxlength="1" inputmode="numeric"/>
+      </div>
+      <!-- نقاط تقدم -->
+      <div class="code-progress" id="codeProgress">
+        <div class="cp-dot" id="dot0"></div>
+        <div class="cp-dot" id="dot1"></div>
+        <div class="cp-dot" id="dot2"></div>
+        <div class="cp-dot" id="dot3"></div>
+        <div class="cp-dot" id="dot4"></div>
+        <div class="cp-dot" id="dot5"></div>
+      </div>
+      <span class="fhint" data-ar="رقم تجريبي: 1 2 3 4 5 6" data-en="Demo code: 1 2 3 4 5 6">رقم تجريبي: 1 2 3 4 5 6</span>
+    </div>
+
+    <div class="err-box" id="errBox">
+      <i class="bi bi-exclamation-circle-fill"></i>
+      <span id="errMsg">الرقم الشخصي غير صحيح</span>
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">
+      <span data-ar="دخول" data-en="Sign In">دخول</span>
+      <i class="bi bi-arrow-left-short" id="loginArrow" style="font-size:20px"></i>
+    </button>
+
+  </div>
+</div>
+
+<script>
+/* ══ نجوم متحركة ══ */
+(function(){
+  const canvas = document.getElementById('starsCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkStar() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.4 + .2,
+      a: Math.random(),
+      s: (Math.random() - .5) * .003,
+      vx: (Math.random() - .5) * .12,
+      vy: (Math.random() - .5) * .12,
+    };
+  }
+
+  function init() {
+    resize();
+    stars = Array.from({length: 220}, mkStar);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.x += s.vx; s.y += s.vy; s.a += s.s;
+      if (s.a < 0) s.a = 0, s.s *= -1;
+      if (s.a > 1) s.a = 1, s.s *= -1;
+      if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+      if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${s.a * .75})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+
+/* ══ إعدادات الشخص ══ */
+const PERSON = {
+  nameAr:     'محمد عبدالله',
+  nameEn:     'Mohammed Abdullah',
+  birthYear:  2015,
+  birthMonth: 3,
+  birthDay:   15,
+  photoSrc:   'images/childhood/5.5.jfif'
+};
+const VALID_CODE = '123456';
+
+function calcAge() {
+  const today = new Date();
+  let age = today.getFullYear() - PERSON.birthYear;
+  const m = today.getMonth() + 1 - PERSON.birthMonth;
+  if (m < 0 || (m === 0 && today.getDate() < PERSON.birthDay)) age--;
+  return age;
+}
+
+function getStage(age) {
+  if (age < 13) return {id:'childhood',   ar:'مرحلة الطفولة',  en:'Childhood Stage',  emoji:'🌱', page:'pages/profile.html'};
+  if (age < 20) return {id:'adolescence', ar:'مرحلة المراهقة', en:'Adolescence Stage', emoji:'🌿', page:'pages/profile_teen.html'};
+  return               {id:'adulthood',   ar:'مرحلة الشباب',   en:'Adulthood Stage',   emoji:'🌳', page:'pages/profile_adult.html'};
+}
+
+let loginLang = localStorage.getItem('lj_lang') || 'ar';
+
+function applyLangLogin(lang) {
+  loginLang = lang; localStorage.setItem('lj_lang', lang);
+  const isEn = lang === 'en';
+  document.documentElement.lang = isEn ? 'en' : 'ar';
+  document.documentElement.dir  = isEn ? 'ltr' : 'rtl';
+  document.body.classList.toggle('ltr', isEn);
+  document.getElementById('langFloatBtn').textContent = isEn ? 'ع' : 'EN';
+  document.querySelectorAll('[data-ar]').forEach(el =>
+    el.textContent = isEn ? (el.dataset.en || el.dataset.ar) : el.dataset.ar
+  );
+  document.getElementById('loginArrow').className = isEn ? 'bi bi-arrow-right-short' : 'bi bi-arrow-left-short';
+  document.getElementById('personName').textContent = isEn ? PERSON.nameEn : PERSON.nameAr;
+  const stage = getStage(calcAge());
+  document.getElementById('stageLabel').textContent = isEn ? stage.en : stage.ar;
+}
+function toggleLangLogin() { applyLangLogin(loginLang === 'ar' ? 'en' : 'ar'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const age   = calcAge();
+  const stage = getStage(age);
+  document.getElementById('stageEmoji').textContent  = stage.emoji;
+  document.getElementById('stageLabel').textContent  = stage.ar;
+  localStorage.setItem('lj_stage',       stage.id);
+  localStorage.setItem('lj_age',         age);
+  localStorage.setItem('lj_birth_year',  PERSON.birthYear);
+  localStorage.setItem('lj_birth_month', PERSON.birthMonth);
+  localStorage.setItem('lj_birth_day',   PERSON.birthDay);
+  applyLangLogin(loginLang);
+
+  const inputs = [...document.querySelectorAll('.ci')];
+  const dots   = [...document.querySelectorAll('.cp-dot')];
+
+  function updateDots() {
+    inputs.forEach((inp, i) => {
+      dots[i]?.classList.toggle('active', !!inp.value);
+      inp.classList.toggle('filled', !!inp.value);
+    });
+  }
+
+  /* focus أول خانة */
+  setTimeout(() => inputs[0].focus(), 300);
+
+  inputs.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      const digit = inp.value.replace(/\D/g, '').slice(-1);
+      inp.value = digit;
+      updateDots();
+      if (digit && i < inputs.length - 1) {
+        inputs[i + 1].focus();
+        inputs[i + 1].select();
+      }
+      if (inputs.every(x => x.value)) doLogin();
+    });
+
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace') {
+        if (inp.value) { inp.value = ''; }
+        else if (i > 0) { inputs[i-1].focus(); inputs[i-1].value = ''; }
+        updateDots(); e.preventDefault();
+      }
+      if (e.key === 'Enter') doLogin();
+      if (e.key === 'ArrowRight' && i > 0)              { inputs[i-1].focus(); e.preventDefault(); }
+      if (e.key === 'ArrowLeft'  && i < inputs.length-1){ inputs[i+1].focus(); e.preventDefault(); }
+    });
+
+    inp.addEventListener('focus', () => inp.select());
+  });
+
+  /* paste */
+  inputs[0].addEventListener('paste', e => {
+    e.preventDefault();
+    const digits = (e.clipboardData.getData('text') || '').replace(/\D/g,'').slice(0,6);
+    digits.split('').forEach((d, idx) => { if (inputs[idx]) inputs[idx].value = d; });
+    updateDots();
+    const next = Math.min(digits.length, inputs.length-1);
+    inputs[next].focus();
+    if (digits.length === 6) doLogin();
+  });
+});
+
+function doLogin() {
+  const code = [...document.querySelectorAll('.ci')].map(i => i.value).join('');
+  if (code !== VALID_CODE) {
+    const eb = document.getElementById('errBox');
+    document.getElementById('errMsg').textContent =
+      loginLang === 'ar' ? 'الرقم الشخصي غير صحيح' : 'Invalid code';
+    eb.classList.add('show');
+    setTimeout(() => eb.classList.remove('show'), 3000);
+    /* رج الخانات */
+    document.querySelectorAll('.ci').forEach(c => {
+      c.style.borderColor = 'rgba(239,68,68,.6)';
+      setTimeout(() => c.style.borderColor = '', 1200);
+    });
+    return;
+  }
+  localStorage.setItem('lj_loggedIn', '1');
+  const age   = calcAge();
+  const stage = getStage(age);
+  localStorage.setItem('lj_stage',       stage.id);
+  localStorage.setItem('lj_age',         age);
+  localStorage.setItem('lj_birth_year',  PERSON.birthYear);
+  localStorage.setItem('lj_birth_month', PERSON.birthMonth);
+  localStorage.setItem('lj_birth_day',   PERSON.birthDay);
+
+  const btn = document.querySelector('.login-btn');
+  btn.innerHTML = '<i class="bi bi-check-circle-fill" style="font-size:22px"></i>';
+  btn.style.background = 'linear-gradient(135deg,#22C55E,#16A34A)';
+  btn.style.boxShadow  = '0 8px 28px rgba(34,197,94,.45)';
+  setTimeout(() => { window.location.href = stage.page; }, 500);
+}
+</script>
+</body>
+</html>
